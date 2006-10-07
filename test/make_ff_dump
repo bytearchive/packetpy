@@ -1,0 +1,5 @@
+#!/usr/bin/env python
+
+f = open('ff_dump', "w+")
+for i in range(20):
+    f.write("\xff")

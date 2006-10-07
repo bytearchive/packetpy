@@ -1,0 +1,7 @@
+
+This directory contains sample packet data used to test packet decoding.
+
+The rule of thumb for gathering packet data types is that the link layer type
+MUST be Ethernet if the packet dump is relevant to all platforms. This is due
+to the fact that there is a conflict in the way Loopback and Raw link layer
+type identifiers are defined in Linux and OpenBSD.
