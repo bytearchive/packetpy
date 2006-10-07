@@ -1,0 +1,35 @@
+
+<p> Each protocol in the protocol stack is an instance of a class derived from
+the Protocol class. In addition to the standard interface documented below,
+each descendant of the Protocol class typically makes available a myriad of
+properties and methods for querying and manipulating a specific protocol. For
+example, one class derived from <b>Protocol</b> is the <b>TCP</b> class, which
+exposes a property <b>srcPort</b>. </p>
+
+
+<h2> Interface </h2>
+
+	<h3>Protocol()</h3>
+
+	<p> The <b>Protocol</b> class and its decendants should not be instantiated
+	by the user. </p>
+
+	<h3>__repr__()</h3>
+
+	<p> Return a human-readable representation of the protocol. </p>
+
+	<h3>__getitem__(protocol)</h3>
+
+	<p> Case-insensitive retrieval of protocols from the protocol stack by
+	name. See the <b>Packet</b> class documentation for more information. </p>
+
+	<h3>__len__(protocol)</h3>
+
+	<p>Case-insensitive name-based check for the depth of the protocol stack beneath
+	this protocol.</p>
+	
+	<h3>has_key(protocol)</h3>
+
+	<p>Case-insensitive name-based check for the existence of a given protocol
+	within this protocol.</p>
+

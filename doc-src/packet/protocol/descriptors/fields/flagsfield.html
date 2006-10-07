@@ -1,0 +1,44 @@
+
+<p> A FlagsField is a subclass of BitField that represent a field of n binary flags.  A good example of a FlagsField
+is the IP flags field which has 3 distinct binary flags  [MF | DF | RES ].
+</p>
+
+<h2> Interface </h2>
+
+	<h3>FlagsField()</h3>
+
+	<p> The <b>FlagsField</b> class is used to repesent the binary flag fields that frequently occur in protocol headers. </p>
+
+	<h3>__get__()</h3>
+
+	<p> Return the value of the field as an integer. </p>
+
+	<h3>__set__(val)</h3>
+
+	<p> The value of a FlagsField can be set in several different ways.</p>
+    
+    <ul>
+      <li>Pass a list of int values which can be bit-wise OR'd together to provide a value for the field.  A fictitious example would be providing [ 1, 2, 4 ] for an 8 bit field.  Giving a field value of 7 (00000111). </li>
+        <!--(block example)-->
+# p is a Packet instance
+# to turn on all flags
+p["ip"].flags[1,2,4]
+        <!--(end)-->
+        @!colourPython(example)!@
+
+      <li>Pass a string which name of the state you want to set the field to.  E.G proto[fieldname] = "state"</li>
+        <!--(block example)-->
+# p is a Packet instance
+# to turn on all flags
+p["ICMP6NeighbourAdvertisement"].flags = "ROUTER"
+        <!--(end)-->
+        @!colourPython(example)!@
+      
+      <li>Pass an int value which represent the binary state you want to set the field to. </li>
+        <!--(block example)-->
+# p is a Packet instance
+# to turn on all flags
+p["IP"].flags = 7
+        <!--(end)-->
+        @!colourPython(example)!@
+    </ul>

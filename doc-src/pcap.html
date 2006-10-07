@@ -1,0 +1,28 @@
+
+<p> The pcap module is an Object Oriented interface to the OpenBSD pcap
+library. </p>
+
+<h2> Example </h2>
+
+<p> The example program below does the following: 
+	<ul>
+		<li> It opens a live pcap dump on the interface "wi0".
+		<li> It applies a filter to the dump (see tcpdump(8)).
+
+		<li> It then captures 10 packets, and prints a hex representation of
+		the packet, the timestamp (in the format (seconds, useconds)) and the
+		length of the packet.
+	</ul>
+</p>
+
+	<!--(block example)-->
+import openbsd.pcap
+
+def callback(packet, tstamp, length):
+    print repr(packet), tstamp, length
+
+p = openbsd.pcap.Live("wi0")
+p.filter("host basho and tcp port 22")
+p.loop(10, callback)
+	<!--(end)-->
+	@!colourPython(example)!@

@@ -1,0 +1,85 @@
+
+<p> PCap feeds come in two flavours - Live and Offline. Live feeds capture
+packets from a network interface, while Offline feeds capture packets from a
+file. The two types of feed share a common interface, which is documented
+below. The sections discussing Live and Offline themselves only document
+departures from and additions to this common interface.</p> 
+
+<h2> Interface </h2>
+
+A PCap Feed has the following methods:
+
+<h3> dispatch(cnt, callback, interpret=0) </h3>
+	
+	<p> Collect and process packets. The <b>cnt</b> parameter specifies the
+	number of packets to capture before returning. A <b>cnt</b> of -1 processes
+	all the packets recieved in one buffer. A <b>cnt</b> of 0 processes all
+	packets until an error occurs, EOF is reached, or the read times out (when
+	doing Live feeds, and a non-zero timeout is specified). The <b>callback</b>
+	parameter is a function with the interface <b>callback(packet, tstamp,
+	length)</b>. It is called for each packet recieved, where <b>packet</b>
+	will be the packet captured (up to the specified snaplength), <b>tstamp</b>
+	will be a timestamp of the format <b>(seconds, useconds)</b>, and length
+	will be the total length of the packet. If the <b>interpret</b> flag is
+	true, an instantiated Packet (see the Packet subsystem documentation) is
+	passed to the callback, instead of the binary packet data.
+
+<h3> loop(cnt, callback, interpret=0) </h3>
+
+	<p> Similar to <b>dispatch</b>, except that it keeps reading packets until
+	<b>cnt</b> packets are read, or an error occurs. If the <b>interpret</b>
+	flag is true, an instantiated Packet (see the Packet subsystem
+	documentation) is passed to the callback, instead of the binary packet
+	data.</p>
+
+<h3> next(interpret=0) </h3>
+
+	<p> Retrieve the next packet, by calling dispatch with a <b>cnt</b> of 1.
+	If the <b>interpret</b> flag is true, an instantiated Packet (see the
+	Packet subsystem documentation) is passed to the callback, instead of the
+	binary packet data.</p>
+
+<h3> inject(packet) </h3>
+
+	<p>Write a new packet through the network interface. </p>
+
+<h3> datalink() </h3>
+	
+	<p> Returns the data link layer type. The following Data Link Types are
+	defined in the pcap module (see include/net/bpf.h): </p>
+
+			<ul>
+					<li>DLT_NULL</li>        
+					<li>DLT_EN10MB</li>      
+					<li>DLT_EN3MB</li>       
+					<li>DLT_AX25</li>        
+					<li>DLT_PRONET</li>      
+					<li>DLT_CHAOS</li>       
+					<li>DLT_IEEE802</li>     
+					<li>DLT_ARCNET</li>      
+					<li>DLT_SLIP</li>        
+					<li>DLT_PPP</li>         
+					<li>DLT_FDDI</li>        
+					<li>DLT_ATM_RFC1483</li> 
+					<li>DLT_LOOP</li>        
+					<li>DLT_ENC</li>         
+					<li>DLT_RAW</li>         
+					<li>DLT_SLIP_BSDOS</li>  
+					<li>DLT_PPP_BSDOS</li>   
+					<li>DLT_IEEE802_11</li>  
+					<li>DLT_PFSYNC</li>      
+					<li>DLT_PFLOG</li>       
+			</ul>
+
+<h3> filter(filterstr) </h3>
+	
+	<p> Apply a filter to the pcap feed. The syntax of <b>filterstr</b> is the
+	same as that of tcpdump, and is documented extensively in the tcpdump(8)
+	manpage.</p>
+
+<h3> close() </h3>
+
+	<p> Close the feed. For many applications you will not have to call this
+	method explicitly - feeds will be closed automatically when they are
+	collected by the Python garbage collector. </p>
+

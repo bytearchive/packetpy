@@ -1,0 +1,30 @@
+<p>The Options object is used inside the FlagsField class as an internal representation
+of the flags that can be set.  In essence it is a pared down dictionary with case-insensitive
+keys. </p>
+
+    <h2>Interface</h2>
+
+    <h3>Options(**kwargs)</h3>
+
+    <p>Takes an unbounded series of name:argument pairs into the constructor that defines the initial
+    contents of the Options object.</p>
+
+    <h3>__getitem__(key)</h3>
+
+    <p>Get the value stored by the key provided.</p>
+
+    <h3>__setitem__(key, value)</h3>
+
+    <p>Set a key:value pair.</p>
+
+    <h3>has_key(key)</h3>
+
+    <p>Return a boolean value based on a case-insensitive search of the keys. </p>
+
+    <h3>keys()</h3>
+
+    <p>Returns a list of the keys stored in the Options object.  Originally provided case is retained.</p>
+    
+    <h3>values()</h3>
+
+    <p>Returns a list of values stored in the Options object.  Originally provided case is retained.</p>

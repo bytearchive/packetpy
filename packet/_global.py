@@ -1,0 +1,3 @@
+
+class PcapError(Exception): pass
+

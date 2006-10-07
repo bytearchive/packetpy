@@ -1,0 +1,13 @@
+index.html          Introduction
+packet.html         packet
+packet
+pcap.html           pcap 
+pcap
+admin.html          Administrivia
+
+# Configuration
+frame <- ../../common/csdocs/frame.html
+copy(../../common/csdocs/style.css)
+docTitle = PacketPy Manual
+docMaintainer = Aldo Cortesi
+docMaintainerEmail = aldo@nullcube.com

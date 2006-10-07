@@ -1,0 +1,41 @@
+
+
+<p> Simply put, a descriptor is a window to a specific piece of protocol
+information. Consider an address field in an IP protocol header. On the wire,
+IPv4 addresses are represented as 4 network-ordered bytes. A user attempting to
+view the address in this format would quickly find that the byte representation
+is not very meaningful - it would have to be converted to the familiar dotted
+quad notation before it could comfortably be worked with.  The same would be
+true if the user wanted to change the address - rather than specifying the byte
+string in the raw, the user would want to supply the address in human-readable
+format.  To ease the type of interaction described above, we could add an extra
+layer between the user and the data. The layer would convert from the
+underlying representation to a human-readable notation on the way out, and do
+the converse on the way in. This layer is a descriptor. Each individual
+protocol class can be viewed as a set of descriptors that allow the user to
+interact with the underlying data.</p>
+
+
+
+<p> The following descriptor types are used in the <b>packet</b> module.
+Documentation for each descriptor type can be accessed by typing 
+"pydoc openbsd._packetDescriptors.descriptorname".</p>
+
+<ul>
+
+	<li> ByteField 
+	<li> IntField
+	<li> BitField 
+	<li> HOInt32Field
+	<li> PaddedString 
+	<li> FlagsField
+	<li> HOInt32FlagsField 
+	<li> IPAddress 
+	<li> IPAddressList 
+	<li> IPv6Address 
+	<li> EthernetAddress 
+	<li> Payload 
+
+</ul>
+
+

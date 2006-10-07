@@ -1,0 +1,81 @@
+
+<p> Each packet is represented as an instance of the <b>Packet</b> class.
+Conceptually, each <b>Packet</b> instance acts like a stack of protocols,
+starting with the protocol at the beginning of the packet, and continuing
+through all the enclosed protocols to the end of the packet. So, for example,
+an ICMP packet from a PF log might consist of the following stacked protocols:
+</p>
+
+<p>
+	<b>
+		pf -&gt; Ethernet -&gt; IP -&gt; ICMP
+	</b>
+</p>
+
+<p> It is the task of the <b>Protocol</b> class to make the protocols in this
+stack easy to access and manipulate. </p>
+
+
+<h2> Interface </h2>
+
+	<h3>Protocol(klass, packet)</h3>
+
+	<p><b>klass</b> is a protocol class matching the first protocol in the
+	protocol stack. <b>packet</b> is raw packet data as a Python string. </p> 
+
+	<h3>__len__()</h3>
+
+	<p> Return the length of the underlying packet data in 8 bit characters. </p>
+
+	<h3>__repr__()</h3>
+
+	<p> Return a human-readable representation of the packet. </p>
+
+	<h3>getProtoList()</h3>
+
+	<p> Retrieves a list of all protocol objects in the protocol stack. </p>
+
+
+	<h3>getRaw()</h3>
+
+	<p> Retrieves the raw packet as a string. </p>
+
+
+	<h3>finalise()</h3>
+
+	<p> Fixes calculated packet elements, including offsets, checksums, etc.
+	This method should be called after packet contents have been modified. </p>
+
+
+	<h3>__getitem__(protocol)</h3>
+
+	<p> Case-insensitive retrieval of protocols from the protocol stack by
+	name. For example, the following retrieves the first IP protocol class
+	found in the stack:</p>
+	
+	<!--(block example)-->
+# p is a Packet instance
+p["ip"]
+	<!--(end)-->
+@!colourPython(example)!@
+
+	<p> Note that the individual protocol instances provide an interface
+	polymorphic to this. Say we had a packet which contained IP-over-IP
+	tunneled traffic. To retrieve the inner IP packet, we would use the
+	following shorthand: </p>
+
+	<!--(block example)-->
+# p is a Packet instance
+p["ip"]["ip"]
+	<!--(end)-->
+@!colourPython(example)!@
+
+	<p> The first example can be read as "retrieve the first IP protocol class
+	contained in the packet". The second example can be read as "retriee the
+	first IP protocol class contained within the first IP protocol class in the
+	packet".</p>
+
+	<h3>has_key(protocol)</h3>
+
+	<p>Case-insensitive name-based check for the existence of a given protocol
+	in the packet.</p>

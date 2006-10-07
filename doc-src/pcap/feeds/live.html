@@ -1,0 +1,51 @@
+
+<p> The Live class is used to capture packets from a network interface. </p>
+
+
+<h2> Interface </h2>
+
+	<h3>Live(interface, snaplen=96, promisc=1, timeout=1000)</h3>
+
+	<p> The Live class is instantiated with the following parameters:
+
+		<ul>
+
+			<li><b>interface</b> - the interface to monitor.</li>
+
+			<li><b>snaplen</b> - the maximum number of bytes to capture for a
+			specific packet. (default 96) </li>
+
+			<li><b>promisc</b> - should the interface be put in promiscuous
+			mode? (default 1)
+
+			<li><b>timeout</b> - the timeout in milliseconds. (default 1000)
+		
+		</ul>
+
+	</p>
+
+	<h3>lookupnet()</h3>
+
+	<p> Returns a <b>(net, mask)</b> tuple, where both net and mask are
+	integers. </p>
+
+	<h3>snapshot()</h3>
+
+	<p> Returns the snapshot length specified when this instance was created.
+	</p>
+
+	<h3>stats()</h3>
+
+	<p> Returns a dictionary of statistics for the period of time between the
+	start of the feed, and the time of the call. The returned dictionary
+	contains the following keys: 
+		
+		<ul>
+
+			<li> ps_recv
+			<li> ps_drop
+			<li> ps_ifdrop
+
+		</ul>
+
+	</p>

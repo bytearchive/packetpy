@@ -1,0 +1,29 @@
+
+<p> The Offline class is used to read packets from a file. </p>
+
+<h2> Interace </h2>
+
+	<h3>Offline(filename)</h3>
+
+	<p> The Offline class is instantiated with a single parameter: the name of
+	the file to be read. </p>
+
+	<h3>lookupnet()</h3>
+
+	<p> Returns a <b>(net, mask)</b> tuple. In the case of the Offline class,
+	both elements of the tuple are always 0. </p>
+
+	<h3>is_swapped()</h3>
+
+	<p> Is the byte order of the system this file was captured on different
+	from that of the current system?</p>
+
+	<h3>version()</h3>
+
+	<p> Returns a tupe <b>(major, minor)</b> indicating the major and minor
+	versions of the pcap used to save the file.</p>
+
+	<h3>fileno()</h3>
+
+	<p> Returns the file number for the open dump file. </p>
+

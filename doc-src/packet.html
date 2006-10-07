@@ -1,0 +1,75 @@
+
+<p>NB: The packet module documentation is not yet complete. At the moment the
+authoritative docmentation is the source. You might also want to look at the
+unit tests, and the example programs included with PyOpenBSD.</p>
+
+<p> The <b>packet</b> module is a pure-Python library for creating, inspecting
+and modifying network packets. Since a complete set of documentation for
+<b>packet</b> would duplicate much of "TCP/IP Illustrated", this manual will
+only discuss useful top-level functions and modules, and give a general
+introduction to working with actual protocol classes. We suggest that
+documentation for the individual protocol classes be accessed using the "pydoc"
+tool distributed with Python (e.g.  try "pydoc openbsd.packet.TCP").</p>
+
+<p> To ease the common task of interpreting packet data obtained via pcap, the
+<b>pcap</b> module can automatically instantiate the appropriate <b>packet</b>
+module protocol classes when packet data is passed back to the user (see the <a
+href="pcap.html">pcap documentation</a> for more information). Most examples in
+the <b>packet</b> module documentation use the <b>pcap</b> module to read
+packet information.</p>
+
+
+<h2> Supported Protocols </h2>
+
+<p> The <b>packet</b> module currently supports the following protocols: </p>
+
+
+<ul>
+	<li> AH
+	<li> ARP
+	<li> ESP
+	<li> enc
+	<li> Ethernet
+	<li> ICMP IPv6 (See numerous subclasses for specific types.)
+	<li> ICMP IPv4 (See numerous subclasses for specific types.)
+	<li> IGMP
+	<li> IP
+	<li> IPv6
+	<li> Loopback
+	<li> pf
+	<li> pf for OpenBSD 3.3 and older
+	<li> TCP
+	<li> UDP
+</ul>
+
+
+
+<h2> Example </h2>
+
+<p> The example below does the following: </p>
+	
+	<ul>
+		
+		<li> Reads a single interpreted IP packet from a pcap dump file
+		<li> Prints it in human readable form
+		<li> Modifies the packet source address
+		<li> Updates calculated packet fields (checksums, etc.) by calling "finalise()"
+		<li> Prints the modified packet in human-readable form
+
+	</ul>
+
+	<!--(block example)-->
+#!/usr/bin/env python
+
+import openbsd
+
+o = openbsd.pcap.Offline("foo")
+o.filter("ip")
+packet = o.next(interpret=1)[0]
+print packet
+packet["ip"].src = "192.168.100.1"
+packet.finalise()
+print packet
+	<!--(end)-->
+@!colourPython(example)!@
+

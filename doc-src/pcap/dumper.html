@@ -1,0 +1,65 @@
+
+<p> The Dumper class is used to write pcap dumps to file. </p>
+
+
+<h2> Interface </h2>
+
+
+<h3> Dumper(feed, file) </h3>
+
+	<p> Dumper is instantiated with the following arguments: 
+
+			<ul>
+
+				<li> <b>feed</b> - An instance of the <b>Live</b> or
+				<b>Offline</b> classes.
+
+				<li> <b>file</b> - A filename to write to.
+
+			</ul>
+
+
+<h3> __call__(packet, tstamp, length) </h3>
+
+	<p> A Dumper instance can be called like a function, with the following
+	arguments: 
+
+			<ul>
+
+				<li> <b> packet </b> - The packet to be dumped, as a string. 
+
+				<li> <b> tstamp </b> - A timestamp tuple of the form (seconds,
+				useconds). 
+
+				<li> <b> length </b> - The original length of the packet.
+
+			</ul>
+
+	Note that this is the same interface as that of the <b>callback</b>
+	argument to the <b>loop</b> and <b>dispatch</b> methods on PCap feeds.</p>
+
+<h3> close() </h3>
+
+	<p> Close the dump. </p>
+
+
+<h2> Example </h2>
+
+<p> The example program below does the following: 
+	
+			<ul>
+				<li> Opens an Live feed on an interface. </li>
+				<li> Opens a dump from the Live feed to the file "dump".</li>
+				<li> Captures 10 packets, writing them to the file. </li>
+			</ul>
+</p>
+
+
+	<!--(block example)-->
+import openbsd.pcap
+
+p = openbsd.pcap.Live("wi0")
+d = openbsd.pcap.Dumper(p, "dump")
+p.loop(10, d)
+	<!--(end)-->
+	@!colourPython(example)!@
