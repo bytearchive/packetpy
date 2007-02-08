@@ -189,7 +189,7 @@ static PyObject *loop(PyObject *self, PyObject *args){
     return Py_None;
 }
 
-# if defined(OPENBSD3) | defined(LINUX2)
+# if defined(OPENBSD4) | defined(LINUX2)
 static PyObject *inject(PyObject *self, PyObject *args){
     PyObject *ptr;
     char *packet;
@@ -420,7 +420,7 @@ static PyMethodDef PcapMethods[] = {
 void init_pcap(void){
     PyObject *module, *global;
     module = Py_InitModule4("_pcap", PcapMethods, NULL, NULL, PYTHON_API_VERSION);
-	global = PyImport_Import("_global");
+	global = PyImport_ImportModule("_global");
 	if (NULL != global) {
 		PcapError = PyObject_GetAttrString(global, "PcapError");
 	}
