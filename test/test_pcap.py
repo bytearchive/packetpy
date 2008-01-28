@@ -176,28 +176,28 @@ class uPacketFactory(unittest.TestCase):
         tf = PacketCap()
         feed.loop(10, tf, 1)
         for i in tf.packets:
-            self.failUnlessEqual(i.protostack._TYPE, "Ethernet")
+            self.failUnlessEqual(i.protostack.TYPE, "Ethernet")
 
     def test_pf(self):
         feed = packet.pcap.Offline("pcap_data/pf")
         tf = PacketCap()
         feed.loop(10, tf, 1)
         for i in tf.packets:
-            self.failUnlessEqual(i.protostack._TYPE, "PF")
+            self.failUnlessEqual(i.protostack.TYPE, "PF")
 
     def test_loop(self):
         feed = packet.pcap.Offline("pcap_data/loop")
         tf = PacketCap()
         feed.loop(10, tf, 1)
         for i in tf.packets:
-            self.failUnlessEqual(i.protostack._TYPE, "Loopback")
+            self.failUnlessEqual(i.protostack.TYPE, "Loopback")
 
     def test_pfold(self):
         feed = packet.pcap.Offline("pcap_data/pf.old")
         tf = PacketCap()
         feed.loop(10, tf, 1)
         for i in tf.packets:
-            self.failUnlessEqual(i.protostack._TYPE, "PFOld")
+            self.failUnlessEqual(i.protostack.TYPE, "PFOld")
 
 
 class uMisc(unittest.TestCase):
