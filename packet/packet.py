@@ -193,9 +193,9 @@ class Protocol(object):
     """
         Derived classes must define the following:
 
-        _TYPE            The name of this protocol.
+        TYPE            The name of this protocol.
     """
-    _TYPE = "Protocol"
+    TYPE = "Protocol"
     def __init__(self, packet, offset=0, constructNext=1):
         """
             Packet initialisation. 
@@ -212,7 +212,7 @@ class Protocol(object):
             self._constructNext()
 
     def __repr__(self):
-        return self._TYPE
+        return self.TYPE
 
     def __getitem__(self, proto):
         h = self._getProtoListInclusive()
@@ -244,13 +244,13 @@ class Protocol(object):
             Is this protocol of type "name"? Used for dict-like acces from
             Packet.
 
-            We inspect the inheritance tree of the class, and check the _TYPE
+            We inspect the inheritance tree of the class, and check the TYPE
             attribute of each one. This allows us to, for instance, refer to
             either "icmp" and "icmpechorequest".
         """
         for i in self.__class__.__mro__:
-            if hasattr(i, "_TYPE"):
-                if i._TYPE.lower() == name.lower():
+            if hasattr(i, "TYPE"):
+                if i.TYPE.lower() == name.lower():
                     return 1
         return 0
 
@@ -445,13 +445,13 @@ class _IPOption(Protocol):
 
 
 class IPOptionEndOfList(_IPOption):
-    _TYPE = "IPOptionEndOfList"
+    TYPE = "IPOptionEndOfList"
     def _getNext(self):
         return None
 
 
 class IPOptionNOP(_IPOption):
-    _TYPE = "IPOptionNOP"
+    TYPE = "IPOptionNOP"
 
 
 class _IPOptionExtended(_IPOption):
@@ -464,7 +464,7 @@ class _IPOptionExtended(_IPOption):
 
     
 class IPOptionSecurity(_IPOptionExtended):
-    _TYPE = "IPOptionSecurity"
+    TYPE = "IPOptionSecurity"
     payload = Payload()
     def _getPayloadOffsets(self):
         offset = 2
@@ -481,19 +481,19 @@ class _IPOptionRouting(_IPOptionExtended):
 
 
 class IPOptionLooseSourceRouting(_IPOptionRouting):
-    _TYPE = "IPOptionLooseSourceRouting"
+    TYPE = "IPOptionLooseSourceRouting"
 
 
 class IPOptionStrictSourceRouting(_IPOptionRouting):
-    _TYPE = "IPOptionStrictSourceRouting"
+    TYPE = "IPOptionStrictSourceRouting"
 
 
 class IPOptionRecordRoute(_IPOptionRouting):
-    _TYPE = "IPOptionRecordRoute"
+    TYPE = "IPOptionRecordRoute"
 
 
 class IPOptionStreamID(_IPOptionExtended):
-    _TYPE = "IPOptionStreamID"
+    TYPE = "IPOptionStreamID"
     payload = Payload()
     def _getPayloadOffsets(self):
         offset = 2
@@ -502,7 +502,7 @@ class IPOptionStreamID(_IPOptionExtended):
 
 
 class IPOptionInternetTimestamp(_IPOptionExtended):
-    _TYPE = "IPOptionInternetTimestamp"
+    TYPE = "IPOptionInternetTimestamp"
     _FlagsOptions = Options(
             TIMESTAMP_ONLY      = 0,
             IP_PRECEDES         = 1,
@@ -518,7 +518,7 @@ class IPOptionInternetTimestamp(_IPOptionExtended):
 
 
 class IP(Protocol):
-    _TYPE = "IP"
+    TYPE = "IP"
     _SIZEHINT = 20
     _FlagsOptions = Options(
         MF     = 1,
@@ -586,7 +586,7 @@ class IP(Protocol):
 
 
 class ICMPBase(Protocol):
-    _TYPE = "ICMP"
+    TYPE = "ICMP"
     _SIZEHINT = 4
     _TypeOptions = Options(
                             ICMPEchoReply                   = 0,
@@ -614,7 +614,7 @@ class ICMPBase(Protocol):
         self.checksum = cksum16(self._prev.payload)
 
     def _selfConstruct(self):
-        self.itype = self._TYPE
+        self.itype = self.TYPE
 
     def _getPayloadOffsets(self):
         offset = 8
@@ -648,7 +648,7 @@ class ICMPDestinationUnreachable(_ICMPWithIPHdr):
 
         See RFC 792
     """
-    _TYPE = "ICMPDestinationUnreachable"
+    TYPE = "ICMPDestinationUnreachable"
     _CodeOptions = Options(
         NET_UNREACHABLE            = 0,
         HOST_UNREACHABLE           = 1,
@@ -669,7 +669,7 @@ class ICMPSourceQuench(_ICMPWithIPHdr):
 
         See RFC 792
     """
-    _TYPE = "ICMPSourceQuench"
+    TYPE = "ICMPSourceQuench"
     _CodeOptions = Options(
         SOURCE_QUENCH            = 0
     )
@@ -683,7 +683,7 @@ class ICMPRedirect(_ICMPWithIPHdr):
         ICMP Redirect
             gateway_addr    :   Gateway Address
     """
-    _TYPE = "ICMPRedirect"
+    TYPE = "ICMPRedirect"
     _SIZEHINT = 8
     _CodeOptions = Options(
         NETWORK_REDIRECT           = 0,
@@ -698,7 +698,7 @@ class ICMPRedirect(_ICMPWithIPHdr):
 
 
 class _ICMPEcho(_ICMPIDSeqBase):
-    _TYPE = "ICMPEcho"
+    TYPE = "ICMPEcho"
 
 
 class ICMPEchoRequest(_ICMPEcho):
@@ -707,7 +707,7 @@ class ICMPEchoRequest(_ICMPEcho):
             identifier  :   Identifier
             seq_num     :   Sequence Number
     """
-    _TYPE = "ICMPEchoRequest"
+    TYPE = "ICMPEchoRequest"
     _CodeOptions = Options(
         ECHO_REQUEST            = 0
     )
@@ -722,7 +722,7 @@ class ICMPEchoReply(_ICMPEcho):
             identifier  :   Identifier
             seq_num     :   Sequence Number
     """
-    _TYPE = "ICMPEchoReply"
+    TYPE = "ICMPEchoReply"
     _CodeOptions = Options(
         ECHO_REPLY            = 0
     )
@@ -738,7 +738,7 @@ class ICMPRouterAdvertisement(ICMPBase):
             code        :   Code of more specific packet purpose 
             checksum    :   Checksum
     """
-    _TYPE = "ICMPRouterAdvertisement"
+    TYPE = "ICMPRouterAdvertisement"
     _CodeOptions = Options(
         ROUTER_ADVERTISEMENT   = 0
     )
@@ -756,7 +756,7 @@ class ICMPRouterSolicitation(ICMPBase):
             code        :   Code of more specific packet purpose 
             checksum    :   Checksum
     """
-    _TYPE = "ICMPRouterSolicitation"
+    TYPE = "ICMPRouterSolicitation"
     _SIZEHINT = 8
     _CodeOptions = Options(
         ROUTER_SOLICITATION   = 0
@@ -776,7 +776,7 @@ class ICMPTimeExceeded(_ICMPWithIPHdr):
         ICMP Time Exceeded
             gateway_addr    :   Gateway Address
     """
-    _TYPE = "ICMPTimeExceeded"
+    TYPE = "ICMPTimeExceeded"
     _CodeOptions = Options(
         TRANSIT        = 0,
         REASSEMBLY     = 1
@@ -791,7 +791,7 @@ class ICMPParameterProblem(_ICMPWithIPHdr):
         ICMP Parameter Problem
             gateway_addr    :   Gateway Address
     """
-    _TYPE = "ICMPParameterProblem"
+    TYPE = "ICMPParameterProblem"
     _CodeOptions = Options(
         HEADER_BAD         = 0,
         OPTION_MISSING     = 1
@@ -824,7 +824,7 @@ class ICMPTimestampRequest(_ICMPTimestampBase):
             receive_ts      :   Receiver Timestamp
             transmit_ts     :   Transmitting Timestamp
     """
-    _TYPE = "ICMPTimestampRequest"
+    TYPE = "ICMPTimestampRequest"
     _CodeOptions = Options(
         TIMESTAMP_REQUEST  = 0
     )
@@ -843,7 +843,7 @@ class ICMPTimestampReply(_ICMPTimestampBase):
             receive_ts      :   Receiver Timestamp
             transmit_ts     :   Transmitting Timestamp
     """
-    _TYPE = "ICMPTimestampReply"
+    TYPE = "ICMPTimestampReply"
     _CodeOptions = Options(
         TIMESTAMP_REPLY    = 0
     )
@@ -859,7 +859,7 @@ class ICMPInformationRequest(_ICMPIDSeqBase):
             identifier      :   Identifier
             seq_num         :   Sequence Number
     """
-    _TYPE = "ICMPInformationRequest"
+    TYPE = "ICMPInformationRequest"
     _CodeOptions = Options(
         INFORMATION_REQUEST    = 0
     )
@@ -874,7 +874,7 @@ class ICMPInformationReply(_ICMPIDSeqBase):
             identifier      :   Identifier
             seq_num         :   Sequence Number
     """
-    _TYPE = "ICMPInformationReply"
+    TYPE = "ICMPInformationReply"
     _CodeOptions = Options(
         INFORMATION_REPLY    = 0
     )
@@ -889,7 +889,7 @@ class ICMPAddressMaskRequest(_ICMPIDSeqBase):
             identifier      :   Identifier
             seq_num         :   Sequence Number
     """
-    _TYPE = "ICMPAddressMarkRequest"
+    TYPE = "ICMPAddressMarkRequest"
     _CodeOptions = Options(
         ADDRESSMASK_REQUEST    = 0
     )
@@ -905,7 +905,7 @@ class ICMPAddressMaskReply(_ICMPIDSeqBase):
             seq_num         :   Sequence Number
     """
     _SIZEHINT = 12
-    _TYPE = "ICMPAddressMaskReply"
+    TYPE = "ICMPAddressMaskReply"
     _CodeOptions = Options(
         ADDRESSMASK_REPLY      = 0
     )
@@ -959,7 +959,7 @@ class TCP(Protocol):
                 checksum    :   Checksum
                 urgent      :   Urgent
     """
-    _TYPE = "TCP"
+    TYPE = "TCP"
     _SIZEHINT = 20
     # Flags
     _FlagsOptions = Options(
@@ -1021,7 +1021,7 @@ class UDP(Protocol):
             length      :   Length
             checksum    :   Checksum
     """
-    _TYPE = "UDP"
+    TYPE = "UDP"
     _SIZEHINT = 8
     srcPort     = IntField(0, 2)
     dstPort     = IntField(2, 2)
@@ -1075,7 +1075,7 @@ class ARP(Protocol):
     # general accross hardware and protocol types, but in practice it
     # almost exclusively deals with Ethernet and IP. Perhaps we're letting a
     # foolish generality be the hobgoblin of our small minds here?
-    _TYPE = "ARP"
+    TYPE = "ARP"
     _SIZEHINT = 28
     _OpcodeOptions = Options(
                             ARP_REQUEST     = 1,
@@ -1127,7 +1127,7 @@ class IPv6(Protocol):
             src             :   Source Address
             dst             :   Destination Address
     """
-    _TYPE = "IPv6"
+    TYPE = "IPv6"
     _SIZEHINT = 40
     # Protocols
     version         = BitField(0, 0, 4)
@@ -1183,7 +1183,7 @@ class IPv6HopByHopHeader(Protocol):
     """
         IPv6 Hop by Hop Header
     """
-    _TYPE = "IPv6HopByHopHeader"
+    TYPE = "IPv6HopByHopHeader"
     _SIZEHINT = 2
 
 
@@ -1191,7 +1191,7 @@ class IPv6RoutingHeader(Protocol):
     """
         IPv6 Routing Header
     """
-    _TYPE = "IPv6RoutingHeader"
+    TYPE = "IPv6RoutingHeader"
     _SIZEHINT = 2
 
 
@@ -1199,7 +1199,7 @@ class IPv6FragmentHeader(Protocol):
     """
         IPv6 Fragment Header
     """
-    _TYPE = "IPv6FragmentHeader"
+    TYPE = "IPv6FragmentHeader"
     _SIZEHINT = 2
 
 
@@ -1207,7 +1207,7 @@ class IPv6DestinationOptionsHeader(Protocol):
     """
         IPv6 Destination Options Header
     """
-    _TYPE = "IPv6DestinationOptions"
+    TYPE = "IPv6DestinationOptions"
     _SIZEHINT = 2
 
 
@@ -1215,7 +1215,7 @@ class AH(Protocol):
     """
         AH
     """
-    _TYPE = "AH"
+    TYPE = "AH"
     _SIZEHINT = 2
     nextheader          = IntField(0, 1, options=ProtocolOptions)
     length              = IntField(1, 1, "Length of the header in 32-bit words, minus 2")
@@ -1242,7 +1242,7 @@ class ESP(Protocol):
     """
         ESP
     """
-    _TYPE = "ESP"
+    TYPE = "ESP"
     _SIZEHINT = 2
     spi             = IntField(0, 4)
     sequence        = IntField(4, 4)
@@ -1262,7 +1262,7 @@ class ICMP6Base(Protocol):
                 checksum    :   Checksum
     """
     # FIXME: There are more types than just these.
-    _TYPE = "ICMP6"
+    TYPE = "ICMP6"
     _SIZEHINT = 8
     _TypeOptions = Options(
                             DESTINATION_UNREACHABLE    = 1,
@@ -1313,7 +1313,7 @@ class ICMP6DestinationUnreachable(ICMP6Base):
             code        :   Code for description of packet purpose
             checksum    :   Checksum
     """
-    _TYPE = "ICMP6DestinationUnreachable"
+    TYPE = "ICMP6DestinationUnreachable"
     unused          = ByteField(4, 4)
     def __init__(self, *args):
         ICMP6Base.__init__(self, *args)
@@ -1327,7 +1327,7 @@ class ICMP6PacketTooBig(ICMP6Base):
     """
         ICMP6 Packet Too Big
     """
-    _TYPE = "ICMP6PacketTooBig"
+    TYPE = "ICMP6PacketTooBig"
     mtu          = ByteField(4, 4)
     def __init__(self, *args):
         ICMP6Base.__init__(self, *args)
@@ -1341,7 +1341,7 @@ class ICMP6TimeExceeded(ICMP6Base):
     """
         ICMP6 Time Exceeded
     """
-    _TYPE = "ICMP6TimeExceeded"
+    TYPE = "ICMP6TimeExceeded"
     unused          = ByteField(4, 4)
     def __init__(self, *args):
         ICMP6Base.__init__(self, *args)
@@ -1355,7 +1355,7 @@ class ICMP6ParameterProblem(ICMP6Base):
     """
         ICMP6 Parameter Problem
     """
-    _TYPE = "ICMP6ParameterProblem"
+    TYPE = "ICMP6ParameterProblem"
     pointer         = IntField(4, 4)
     payload         = Payload()
     def __repr__(self):
@@ -1380,7 +1380,7 @@ class ICMP6EchoRequest(_ICMP6EchoBase):
             seq_num     :   Sequence Number
             ip6hdr      :   IPv6 Header
     """
-    _TYPE = "ICMP6EchoRequest"
+    TYPE = "ICMP6EchoRequest"
     def __repr__(self):
         return "ICMPv6 Echo Request"
 
@@ -1392,7 +1392,7 @@ class ICMP6EchoReply(_ICMP6EchoBase):
             seq_num     :   Sequence Number
             ip6hdr      :   IPv6 Header
     """
-    _TYPE = "ICMP6EchoReply"
+    TYPE = "ICMP6EchoReply"
     def __repr__(self):
         return "ICMPv6 Echo Reply"
 
@@ -1418,7 +1418,7 @@ class ICMP6NeighbourSolicitation(ICMP6NeighbourBase):
             target_addr     :   Target Address
             options         :   Contains a Link Layer Address
     """
-    _TYPE = "ICMP6NeighbourSolicitation"
+    TYPE = "ICMP6NeighbourSolicitation"
     def __repr__(self):
         return "ICMPv6 Neighbour Solicitation"
 
@@ -1429,7 +1429,7 @@ class ICMP6NeighbourAdvertisement(ICMP6NeighbourBase):
             target_addr     :   Target Address
             options         :   Contains a Link Layer Address
     """
-    _TYPE = "ICMP6NeighbourAdvertisement"
+    TYPE = "ICMP6NeighbourAdvertisement"
     _FlagsOptions = Options(
         OVERRIDE    = 1,
         SOLICITED   = 2,
@@ -1483,7 +1483,7 @@ class Ethernet(Protocol):
                 etype   :   Type of encapsulated protocol
                 length  :   Length of packet
     """
-    _TYPE = "Ethernet"
+    TYPE = "Ethernet"
     _SIZEHINT = 14
     TypeOptions = Options(
                             IP         = 0x800,
@@ -1527,7 +1527,7 @@ class _PFBase(Protocol):
         OpenBSD Specific.
         PF Logs.
     """
-    _TYPE="PF"
+    TYPE="PF"
     # Reasons
     ReasonOptions = Options(
                             match       = _sysvar.PFRES_MATCH,
@@ -1582,7 +1582,7 @@ class _PFBase(Protocol):
 
 
 class PFOld(_PFBase):
-    _TYPE = "PFOld"
+    TYPE = "PFOld"
     _SIZEHINT = _sysvar.IFNAMSIZ + 12
     # Fields
     safamily    =   IntField(0, 4, options=_PFBase.SAFamilyOptions)
@@ -1614,7 +1614,7 @@ class PF(_PFBase):
         OpenBSD Specific : PF
     """
     _SIZEHINT = _sysvar.IFNAMSIZ + _sysvar.PF_RULESET_NAME_SIZE + 16
-    _TYPE = "PF"
+    TYPE = "PF"
     # Fields
     length      =   IntField(0, 1)  # Minus padding
     safamily    =   IntField(1, 1, options=_PFBase.SAFamilyOptions)
@@ -1660,7 +1660,7 @@ class Enc(Protocol):
                AUTH         = 0x0800,
                AUTH_AH      = 0x2000
     )
-    _TYPE = "Enc"
+    TYPE = "Enc"
     addressFamily       = HOInt32Field(0)
     spi                 = IntField(4, 4)
     flags               = HOInt32FlagsField(8, options=_FlagsOptions)
@@ -1688,7 +1688,7 @@ class Loopback(Protocol):
             length          :   Length
             addressFamily   :   Address Family
     """
-    _TYPE = "Loopback"
+    TYPE = "Loopback"
     _SIZEHINT = 4
     # AF Families
     AFOptions = Options(

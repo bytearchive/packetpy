@@ -93,8 +93,8 @@ class uProtocolGetitem(pcaptester.pcapTester):
         self.data = self.getpacket("icmp_echo_reply")
 
     def test_getitem(self):
-        self.failUnlessEqual(self.data["ip"]["icmp"]._TYPE, "ICMPEchoReply")
-        self.failUnlessEqual(self.data["icmp"]._TYPE, "ICMPEchoReply")
+        self.failUnlessEqual(self.data["ip"]["icmp"].TYPE, "ICMPEchoReply")
+        self.failUnlessEqual(self.data["icmp"].TYPE, "ICMPEchoReply")
 
     def test_has_key(self):
         self.failUnless(self.data.has_key("icmpechoreply"))
@@ -115,9 +115,9 @@ class uPacket(pcaptester.pcapTester):
         self.data = self.getpacket("icmp_echo_reply")
 
     def test_getitem(self):
-        self.failUnlessEqual(self.data["ip"]._TYPE, "IP")
-        self.failUnless(self.data["icmp"]._TYPE)
-        self.failUnless(self.data["icmpecho"]._TYPE)
+        self.failUnlessEqual(self.data["ip"].TYPE, "IP")
+        self.failUnless(self.data["icmp"].TYPE)
+        self.failUnless(self.data["icmpecho"].TYPE)
         self.failUnlessRaises(KeyError, self.data.__getitem__, "moomoo")
 
     def test_finalise(self):
