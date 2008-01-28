@@ -280,7 +280,7 @@ class uIPOptionsRecordRoute(pcaptester.pcapTester):
 
     def test_nop(self):
         self.failUnlessEqual(len(self.p["ip"].options), 2)
-        self.failUnlessEqual(self.p["ip"].options._next._TYPE, "IPOptionEndOfList")
+        self.failUnlessEqual(self.p["ip"].options._next.TYPE, "IPOptionEndOfList")
 
 
 ##
@@ -743,7 +743,7 @@ class uLoopBack(pcaptester.pcapTester):
         self.failUnlessEqual(protos, protos[2]._getProtoList())
 
     def test_getProtoListInclusive(self):
-        names = [i._TYPE for i in self.p.getProtoList()]
+        names = [i.TYPE for i in self.p.getProtoList()]
         self.failUnlessEqual(names, ["Loopback", "IP", "ICMPEchoRequest"])
 
     def test_payload(self):

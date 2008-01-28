@@ -5,7 +5,7 @@ class uLoopback(unittest.TestCase):
     def test_create(self):
         p = createPacket(Loopback)
         self.failUnlessEqual(len(p.protostack), 1)
-        self.failUnlessEqual(p.protostack._TYPE, "Loopback")
+        self.failUnlessEqual(p.protostack.TYPE, "Loopback")
 
     def test_create_nested(self):
         p = createPacket(Loopback, IP)

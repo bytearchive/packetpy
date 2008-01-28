@@ -36,7 +36,7 @@ class uOptions(unittest.TestCase):
         self.failUnlessEqual(repr(i), "Options(fOo=1,bAr=2)")
 
 class DummyProtocol(packet.packet.Protocol):
-    _TYPE = "dummy"
+    TYPE = "dummy"
     intfieldOptions = packet._packetDescriptors.Options(
                                                         one     = 1,
                                                         two     = 2,
