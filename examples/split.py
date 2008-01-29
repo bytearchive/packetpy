@@ -56,7 +56,7 @@ if __name__ == "__main__":
         help="output filename prefix",
     )
     parser.add_option(
-        "--count", dest="count", default=20000,
+        "--count", dest="count", type="int", default=20000,
         help="write n packets per chunk [resulting in a len(chunk) = len(packets) / count]",
     )
     (options, args) = parser.parse_args()
