@@ -1592,7 +1592,7 @@ class PFOld(_PFBase):
     direction   =   IntField(
                         4+_sysvar.IFNAMSIZ+6,
                         2,
-                        options=_PFBase.DirectionOption
+                        options=_PFBase.DirectionOptions
                     )
     length      =   _sysvar.IFNAMSIZ + 12
     payload     =   Payload()
@@ -1748,6 +1748,7 @@ AF_JUMPER = DoubleAssociation(
     }
 )
 
+
 IP4_PROTO_JUMPER = DoubleAssociation(
     {
         ProtocolOptions["ICMP"]:      ICMP,
@@ -1759,6 +1760,7 @@ IP4_PROTO_JUMPER = DoubleAssociation(
         ProtocolOptions["ESP"]:       ESP
     }
 )
+
 
 IP6_PROTO_JUMPER = DoubleAssociation(
     {
