@@ -259,8 +259,6 @@ class Protocol(object):
             Return a number of bytes relative to the start of the current
             protocol.
         """
-        if (self.offset+frm+tlen) > len(self.packet):
-            raise DataBoundsError, "Field beyond packet bounds."
         return self.packet._data[self.offset+frm:self.offset+frm+tlen].tostring()
 
     def _setByteField(self, frm, tlen, val):
@@ -275,7 +273,11 @@ class Protocol(object):
             Return an integer corresponding to a whole number of bytes,
             relative to the start of the current protocol header.
         """
-        return multiord(self._getByteField(frm, tlen))
+        b = self._getByteField(frm, tlen)
+        if b and tlen == 1:
+            return ord(b)
+        else:
+            return multiord(b)
 
     def _setIntField(self, frm, tlen, val):
         """

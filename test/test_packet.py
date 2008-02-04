@@ -99,11 +99,7 @@ class uProtocolGetitem(pcaptester.pcapTester):
 class uProtocolShortenedHeaders(pcaptester.pcapTester):
     dump = "icmp_time_exceeded"
     def test_getitem(self):
-        libpry.raises(
-            packet.packet.DataBoundsError,
-            getattr,
-            self.data["icmp"].iphdr, "payload"
-        )
+        assert self.data["icmp"].iphdr.payload
 
 
 class uPacket(pcaptester.pcapTester):

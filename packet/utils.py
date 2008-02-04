@@ -25,6 +25,7 @@
 #    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import math
 
+
 def multiord(x):
     """
         Like ord(), but takes multiple characters. I.e. calculate the

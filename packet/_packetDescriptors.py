@@ -110,7 +110,7 @@ class IntField(object):
         return num
 
     def __get__(self, obj, objtype):
-        if not obj:
+        if obj is None:
             return self.options
         return self._getConversion(obj._getIntField(self.frm, self.tlen))
 
@@ -163,7 +163,7 @@ class ByteField(object):
         self.__doc__ = doc
 
     def __get__(self, obj, objtype):
-        if not obj:
+        if obj is None:
             return None
         return obj._getByteField(self.frm, self.tlen)
 
@@ -186,7 +186,7 @@ class PaddedString(object):
         self.__doc__ = doc
 
     def __get__(self, obj, objtype):
-        if not obj:
+        if obj is None:
             return None
         ret = obj._getByteField(self.frm, self.tlen)
         return ret.split("\0")[0]
@@ -212,7 +212,7 @@ class BitField(object):
         self.__doc__ = doc
 
     def __get__(self, obj, objtype):
-        if not obj:
+        if obj is None:
             return None
         return obj._getBitField(self.frm, self.bitoffset, self.bitlen)
 
@@ -247,7 +247,7 @@ class FlagsField(BitField):
         return num
 
     def __get__(self, obj, objtype):
-        if not obj:
+        if obj is None:
             return self.options
         return self._getConversion(BitField.__get__(self, obj, objtype))
 
@@ -294,7 +294,7 @@ class IPAddress(object):
         self.__doc__ = doc
 
     def __get__(self, obj, objtype):
-        if not obj:
+        if obj is None:
             return None
         return utils.IPAddress.fromBytes(obj._getByteField(self.frm, 4)).address
 
@@ -318,7 +318,7 @@ class IPAddressList(object):
         self.__doc__ = doc
 
     def __get__(self, obj, objtype):
-        if not obj:
+        if obj is None:
             return None
         addrlist = []
         for i in range(self.frm, self.tlen, 4):
@@ -347,7 +347,7 @@ class IPv6Address(object):
         self.__doc__ = doc
 
     def __get__(self, obj, objtype):
-        if not obj:
+        if obj is None:
             return None
         return utils.IP6Address.fromBytes(obj._getByteField(self.frm, 16)).address
 
@@ -364,7 +364,7 @@ class EthernetAddress(object):
         self.__doc__ = doc
 
     def __get__(self, obj, objtype):
-        if not obj:
+        if obj is None:
             return None
         return utils.EthernetAddress.fromBytes(obj._getByteField(self.frm, 6)).address
 
@@ -383,7 +383,7 @@ class Payload(object):
         self.__doc__ = doc
     
     def __get__(self, obj, objtype):
-        if not obj:
+        if obj is None:
             return None
         return obj._getByteField(*obj._getPayloadOffsets())
 
@@ -404,7 +404,7 @@ class DescriptorProxy(object):
         self.__doc__ = doc
 
     def __get__(self, obj, objtype):
-        if not obj:
+        if obj is None:
             return None
         uobj = getattr(obj, self.name)
         return uobj.__get__(obj, objtype)
