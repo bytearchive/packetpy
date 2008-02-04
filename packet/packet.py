@@ -1,30 +1,24 @@
-#    Copyright (c) 2003, 2004, 2005, 2006 Aldo Cortesi
-#    Copyright (c) 2003, David Harrison
-#    All rights reserved.
-#
-#    Redistribution and use in source and binary forms, with or without
-#    modification, are permitted provided that the following conditions are met:
-#
-#    *   Redistributions of source code must retain the above copyright notice, this
-#        list of conditions and the following disclaimer.
-#    *   Redistributions in binary form must reproduce the above copyright notice,
-#        this list of conditions and the following disclaimer in the documentation
-#        and/or other materials provided with the distribution.
-#    *   Neither the name of Nullcube nor the names of its contributors, nor the
-#        name of David Harrison may be used to
-#        endorse or promote products derived from this software without specific
-#        prior written permission.
-#
-#    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-#    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-#    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-#    DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-#    ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-#    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-#    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-#    ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-#    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-#    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# Copyright (c) 2003-2008, Nullcube Pty Ltd
+# All rights reserved.
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"), to
+# deal in the Software without restriction, including without limitation the
+# rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+# sell copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """
     PacketPy is a pure-Python module for parsing, modifying and creating
     network packets.
@@ -78,20 +72,20 @@ class DataBoundsError(Exception): pass
 # IANA "Assigned Numbers" RFC
 #
 ProtocolOptions = Options(
-                                ICMP                        = 1,
-                                IGMP                        = 2,
-                                IP_IN_IP                    = 4,
-                                TCP                         = 6,
-                                UDP                         = 17,
-                                IPv6                        = 41,
-                                ROUTING_HEADER              = 43,
-                                FRAGMENTATION_HEADER        = 44,
-                                ESP                         = 50,
-                                AH                          = 51,
-                                ICMP6                       = 58,
-                                NO_NEXT_HEADER              = 59,
-                                DESTINATION_OPTIONS_HEADER  = 60
-                        )
+    ICMP                        = 1,
+    IGMP                        = 2,
+    IP_IN_IP                    = 4,
+    TCP                         = 6,
+    UDP                         = 17,
+    IPv6                        = 41,
+    ROUTING_HEADER              = 43,
+    FRAGMENTATION_HEADER        = 44,
+    ESP                         = 50,
+    AH                          = 51,
+    ICMP6                       = 58,
+    NO_NEXT_HEADER              = 59,
+    DESTINATION_OPTIONS_HEADER  = 60
+)
 
 
 def createPacket(*headerClasses):
@@ -259,7 +253,13 @@ class Protocol(object):
             Return a number of bytes relative to the start of the current
             protocol.
         """
-        return self.packet._data[self.offset+frm:self.offset+frm+tlen].tostring()
+        if (tlen == 1):
+            try:
+                return self.packet._data[self.offset+frm]
+            except IndexError:
+                return ''
+        else:
+            return self.packet._data[self.offset+frm:self.offset+frm+tlen].tostring()
 
     def _setByteField(self, frm, tlen, val):
         """
@@ -994,11 +994,12 @@ class TCP(Protocol):
         ip = self._prev
         tcplen = self._getPayloadOffsets()
         tcplen = tcplen[0] + tcplen[1]
-        phdr = [        ip._getByteField(12, 4),
-                        ip._getByteField(16, 4),
-                        "\0",
-                        ip._getByteField(9, 1),
-                        multichar(tcplen, 2)
+        phdr = [
+                    ip._getByteField(12, 4),
+                    ip._getByteField(16, 4),
+                    "\0",
+                    ip._getByteField(9, 1),
+                    multichar(tcplen, 2)
                 ]
         return array.array("c", "".join(phdr))
 
@@ -1037,11 +1038,12 @@ class UDP(Protocol):
 
     def _getPseudoHeader(self):
         ip = self._prev
-        phdr = [        ip._getByteField(12, 4),
-                        ip._getByteField(16, 4),
-                        "\0",
-                        ip._getByteField(9, 1),
-                        self._getByteField(4, 2)
+        phdr = [
+                    ip._getByteField(12, 4),
+                    ip._getByteField(16, 4),
+                    "\0",
+                    ip._getByteField(9, 1),
+                    self._getByteField(4, 2)
                 ]
         return array.array("c", "".join(phdr))
 
@@ -1170,10 +1172,10 @@ class IPv6(Protocol):
 
     def _getPseudoHeader(self):
         phdr = [
-                        self._getByteField(8, 16),
-                        self._getByteField(24, 16),
-                        utils.multichar(self.payloadlength, 4),
-                        "\0\0\0", chr(58)
+                    self._getByteField(8, 16),
+                    self._getByteField(24, 16),
+                    utils.multichar(self.payloadlength, 4),
+                    "\0\0\0", chr(58)
                 ]
         return "".join(phdr)
 

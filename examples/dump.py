@@ -3,7 +3,6 @@ import time
 from optparse import OptionParser
 import packet.pcap
 
-
 def callback_dummy(pack, ts, length):
     pass
 
@@ -16,7 +15,7 @@ def main():
     parser = OptionParser()
     parser.add_option(
         "--time", "-t", dest= "time", default=False, action="store_true",
-        help="Suppress output, but print a time after completion.",
+        help="Suppress output, but print the time taken for traversal after completion.",
     )
     (options, args) = parser.parse_args()
     if len(args) != 1:
