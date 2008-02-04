@@ -114,9 +114,9 @@ class DoubleAssociation(dict):
     """
         A double-association is a broadminded dictionary - it goes both ways.
             
-        The rather simple implementation below requires the keys and values to
-        be two disjoint sets. That is, if a given value is both a key and a
-        value in a DoubleAssociation, you get unexpected behaviour.
+        DoubleAssociation requires the keys and values to be two disjoint sets.
+        That is, if a given value is both a key and a value in a
+        DoubleAssociation, you get unexpected behaviour.
     """
     # FIXME:
     #   While DoubleAssociation is adequate for our use, it is not entirely complete:
@@ -321,7 +321,9 @@ class IP6Address(_IPBase):
             octets.append(hex(multiord(addr[2*i:2*i+2]))[2:])
         start, finish = findLongestSubsequence(octets, "0")
         if finish:
-            return IP6Address(":".join(octets[0:start]) + "::" + ":".join(octets[finish+1:]))
+            return IP6Address(
+                ":".join(octets[0:start]) + "::" + ":".join(octets[finish+1:])
+            )
         else:
             return IP6Address(":".join(octets))
 
@@ -332,7 +334,8 @@ class IP6Address(_IPBase):
         abbr = self.address.count("::")
         if self.address.find("::") > -1:
             if (self.address.count("::") > 1):
-                raise ValueError, "Mal-formed IPv6 address: only one :: abbreviation allowed."
+                s = "Mal-formed IPv6 address: only one :: abbreviation allowed."
+                raise ValueError(s)
             first, second = self.address.split("::")
             first = getBlocks(first)
             second = getBlocks(second)

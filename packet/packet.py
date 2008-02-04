@@ -1442,19 +1442,19 @@ class ICMP6NeighbourAdvertisement(ICMP6NeighbourBase):
 
 
 _ICMP6Jumptable = {
-    ICMP6Base._TypeOptions["DESTINATION_UNREACHABLE"]:           ICMP6DestinationUnreachable,
-    ICMP6Base._TypeOptions["PACKET_TOO_BIG"]:                    ICMP6PacketTooBig,
-    ICMP6Base._TypeOptions["TIME_EXCEEDED"]:                     ICMP6TimeExceeded,
-    ICMP6Base._TypeOptions["PARAMETER_PROBLEM"]:                 ICMP6ParameterProblem,
-    ICMP6Base._TypeOptions["ECHO_REQUEST"]:                      ICMP6EchoRequest,
-    ICMP6Base._TypeOptions["ECHO_REPLY"]:                        ICMP6EchoReply,
+    ICMP6Base._TypeOptions["DESTINATION_UNREACHABLE"]:  ICMP6DestinationUnreachable,
+    ICMP6Base._TypeOptions["PACKET_TOO_BIG"]:           ICMP6PacketTooBig,
+    ICMP6Base._TypeOptions["TIME_EXCEEDED"]:            ICMP6TimeExceeded,
+    ICMP6Base._TypeOptions["PARAMETER_PROBLEM"]:        ICMP6ParameterProblem,
+    ICMP6Base._TypeOptions["ECHO_REQUEST"]:             ICMP6EchoRequest,
+    ICMP6Base._TypeOptions["ECHO_REPLY"]:               ICMP6EchoReply,
     #ICMP6Base._TypeOptions["MULTICAST_LISTENER_QUERY"]:
     #ICMP6Base._TypeOptions["MULTICAST_LISTENER_REPORT"]:
     #ICMP6Base._TypeOptions["MULTICAST_LISTENER_DONE"]:
     #ICMP6Base._TypeOptions["ROUTER_SOLICITATION"]:
     #ICMP6Base._TypeOptions["ROUTER_ADVERTISEMENT"]:
-    ICMP6Base._TypeOptions["NEIGHBOUR_SOLICITATION"]:            ICMP6NeighbourSolicitation,
-    ICMP6Base._TypeOptions["NEIGHBOUR_ADVERTISEMENT"]:           ICMP6NeighbourAdvertisement,
+    ICMP6Base._TypeOptions["NEIGHBOUR_SOLICITATION"]:   ICMP6NeighbourSolicitation,
+    ICMP6Base._TypeOptions["NEIGHBOUR_ADVERTISEMENT"]:  ICMP6NeighbourAdvertisement,
     #ICMP6Base._TypeOptions["REDIRECT"]:
     #ICMP6Base._TypeOptions["ROUTER_RENUMBERING"]:
     #ICMP6Base._TypeOptions["NODE_INFO_QUERY"]:
@@ -1546,7 +1546,6 @@ class _PFBase(Protocol):
                             srclimit    = _sysvar.PFRES_SRCLIMIT,
                             synproxy    = _sysvar.PFRES_SYNPROXY
     )
-
     # Actions
     ActionOptions = Options(
                             drop              = _sysvar.PFACT_DROP,
@@ -1590,7 +1589,11 @@ class PFOld(_PFBase):
     ruleno      =   IntField(4+_sysvar.IFNAMSIZ, 2)
     reason      =   IntField(4+_sysvar.IFNAMSIZ+2, 2, options=_PFBase.ReasonOptions)
     action      =   IntField(4+_sysvar.IFNAMSIZ+4, 2, options=_PFBase.ActionOptions)
-    direction   =   IntField(4+_sysvar.IFNAMSIZ+6, 2, options=_PFBase.DirectionOptions)
+    direction   =   IntField(
+                        4+_sysvar.IFNAMSIZ+6,
+                        2,
+                        options=_PFBase.DirectionOption
+                    )
     length      =   _sysvar.IFNAMSIZ + 12
     payload     =   Payload()
     def _constructNext(self):
@@ -1606,7 +1609,13 @@ class PFOld(_PFBase):
         reason = self.ReasonOptions.toStr(self.reason)
         action = self.ActionOptions.toStr(self.action)
         direction = self.DirectionOptions.toStr(self.direction)
-        return "Old PF rule %s (%s) %s %s on %s"%(self.ruleno, reason, action, direction, self.ifname)
+        return "Old PF rule %s (%s) %s %s on %s"%(
+                    self.ruleno,
+                    reason,
+                    action,
+                    direction,
+                    self.ifname
+                )
 
 
 class PF(_PFBase):
@@ -1625,8 +1634,10 @@ class PF(_PFBase):
     rulenr      =   IntField(4 + _sysvar.IFNAMSIZ + _sysvar.PF_RULESET_NAME_SIZE, 4)
     # Note: if subrulenumber == ((1L << 32) -1), there is no subrule. 
     subrulenr   =   IntField(8 + _sysvar.IFNAMSIZ + _sysvar.PF_RULESET_NAME_SIZE, 4)
-    direction   =   IntField(12 + _sysvar.IFNAMSIZ + _sysvar.PF_RULESET_NAME_SIZE, 1,
-                                                                options=_PFBase.DirectionOptions)
+    direction   =   IntField(
+                        12 + _sysvar.IFNAMSIZ + _sysvar.PF_RULESET_NAME_SIZE,
+                        1, options=_PFBase.DirectionOptions
+                    )
     pad         =   ByteField(13 + _sysvar.IFNAMSIZ + _sysvar.PF_RULESET_NAME_SIZE, 3)
     payload     =   Payload()
     def _constructNext(self):
@@ -1646,7 +1657,14 @@ class PF(_PFBase):
             subrulenr = 0
         else:
             subrulenr = self.subrulenr
-        return "PF rule %s/%s (%s) %s %s on %s"%(self.rulenr, subrulenr, reason, action, direction, self.ifname)
+        return "PF rule %s/%s (%s) %s %s on %s"%(
+                    self.rulenr,
+                    subrulenr,
+                    reason,
+                    action,
+                    direction,
+                    self.ifname
+                )
 
 
 class Enc(Protocol):
@@ -1712,10 +1730,13 @@ class Loopback(Protocol):
         return self.length, len(self.packet) - self.length
 
     def _selfConstruct(self):
-        self.addressFamily = AF_JUMPER.get(self._next.__class__, self.AFOptions["unspec"])
+        self.addressFamily = AF_JUMPER.get(
+            self._next.__class__, self.AFOptions["unspec"]
+        )
 
     def __repr__(self):
-        # Intentionally returns an empty string. We don't normally want to know about loopback...
+        # Intentionally returns an empty string. We don't normally want to know
+        # about loopback...
         return ""
 
 
@@ -1725,7 +1746,6 @@ AF_JUMPER = DoubleAssociation(
         2:    IP,
         24:   IPv6,
     }
-
 )
 
 IP4_PROTO_JUMPER = DoubleAssociation(

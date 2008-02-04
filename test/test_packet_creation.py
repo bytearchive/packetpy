@@ -1,153 +1,167 @@
-import unittest
+import libpry
 from packet.packet import *
 
-class uLoopback(unittest.TestCase):
+class uLoopback(libpry.AutoTree):
     def test_create(self):
         p = createPacket(Loopback)
-        self.failUnlessEqual(len(p.protostack), 1)
-        self.failUnlessEqual(p.protostack.TYPE, "Loopback")
+        assert len(p.protostack) ==  1
+        assert p.protostack.TYPE ==  "Loopback"
 
     def test_create_nested(self):
         p = createPacket(Loopback, IP)
-        self.failUnlessEqual(len(p.protostack), 2)
-        self.failUnless(p["ip"])
+        assert len(p.protostack) ==  2
+        assert p["ip"]
 
     def test_payloads(self):
         p = createPacket(Loopback)
         expected = "supercalifragilisticexpialidocious"
         p.payload = expected
-        self.failUnlessEqual(p.payload, expected)
+        assert p.payload ==  expected
 
     def test_reinitialise(self):
         p = createPacket(Loopback, IP)
         p.initialise()
-        self.failUnless(p["ip"])
+        assert p["ip"]
 
 
-class uEthernet(unittest.TestCase):
+class uEthernet(libpry.AutoTree):
     def test_create(self):
         e = createPacket(Ethernet)
-        self.failUnless(e["ethernet"])
+        assert e["ethernet"]
         e.initialise()
-        self.failUnless(e["ethernet"])
+        assert e["ethernet"]
 
     def test_create_nested(self):
         e = createPacket(Ethernet, IP)
-        self.failUnless(e["ip"])
+        assert e["ip"]
         e.initialise()
-        self.failUnless(e["ip"])
+        assert e["ip"]
 
     def test_payload(self):
         e = createPacket(Ethernet)
         expected = "foofoo"
         e.payload = expected
         e.initialise()
-        self.failUnlessEqual(e.payload, expected)
+        assert e.payload ==  expected
 
 
-class uARP(unittest.TestCase):
+class uARP(libpry.AutoTree):
     def test_create(self):
         a = createPacket(Ethernet, ARP)
-        self.failUnless(a["arp"])
+        assert a["arp"]
         a.initialise()
-        self.failUnless(a["arp"])
+        assert a["arp"]
 
 
-class uIP(unittest.TestCase):
+class uIP(libpry.AutoTree):
     def test_create(self):
         a = createPacket(Ethernet, IP)
-        self.failUnless(a["ip"])
+        assert a["ip"]
         a.initialise()
-        self.failUnless(a["ip"])
+        assert a["ip"]
 
     def test_defaults(self):
         a = createPacket(Ethernet, IP)
-        self.failUnlessEqual(a["ip"].version, 4)
-        self.failUnless(a["ip"].ttl)
+        assert a["ip"].version ==  4
+        assert a["ip"].ttl
 
     def test_create_nested(self):
         a = createPacket(Ethernet, IP, TCP)
-        self.failUnless(a["tcp"])
+        assert a["tcp"]
         a.initialise()
-        self.failUnless(a["tcp"])
+        assert a["tcp"]
 
     def test_payload(self):
         a = createPacket(Ethernet, IP)
         expected = "Count Frufru"
         a.payload = expected
         a.initialise()
-        self.failUnlessEqual(a.payload, expected)
+        assert a.payload ==  expected
 
 
-class uIPv6(unittest.TestCase):
+class uIPv6(libpry.AutoTree):
     def test_create(self):
         a = createPacket(Ethernet, IPv6)
-        self.failUnless(a["ipv6"])
+        assert a["ipv6"]
         a.initialise()
-        self.failUnless(a["ipv6"])
+        assert a["ipv6"]
 
     def test_defaults(self):
         a = createPacket(Ethernet, IPv6)
-        self.failUnlessEqual(a["ipv6"].version, 6)
-        self.failUnlessEqual(a["ipv6"].hoplimit, 255)
-        self.failUnlessEqual(a["ipv6"].diffservices, 0)
+        assert a["ipv6"].version ==  6
+        assert a["ipv6"].hoplimit ==  255
+        assert a["ipv6"].diffservices ==  0
 
     def test_create_nested(self):
         a = createPacket(Ethernet, IPv6, TCP)
-        self.failUnless(a["ipv6"])
+        assert a["ipv6"]
         a.initialise()
-        self.failUnless(a["tcp"])
+        assert a["tcp"]
 
 
-class uTCP(unittest.TestCase):
+class uTCP(libpry.AutoTree):
     def test_create(self):
         a = createPacket(Ethernet, IP, TCP)
-        self.failUnless(a["ip"])
+        assert a["ip"]
         a.initialise()
-        self.failUnless(a["ip"])
+        assert a["ip"]
 
 
-class uUDP(unittest.TestCase):
+class uUDP(libpry.AutoTree):
     def test_create(self):
         a = createPacket(Ethernet, IP, UDP)
-        self.failUnless(a["udp"])
+        assert a["udp"]
         a.initialise()
-        self.failUnless(a["udp"])
+        assert a["udp"]
 
 
 #
 # We only test one of each "flavour" of ICMP packet.
 #
-class uICMPDestinationUnreachable(unittest.TestCase):
+class uICMPDestinationUnreachable(libpry.AutoTree):
     def test_create(self):
         i = createPacket(IP, ICMPDestinationUnreachable)
-        self.failUnless(i["icmpDestinationUnreachable"])
+        assert i["icmpDestinationUnreachable"]
         i.initialise()
-        self.failUnless(i["icmpDestinationUnreachable"])
+        assert i["icmpDestinationUnreachable"]
 
     def test_payload(self):
         i = createPacket(IP, ICMPDestinationUnreachable)
-        self.failUnless(repr(i["icmp"].iphdr))
+        assert repr(i["icmp"].iphdr)
 
 
-class uICMPEchoRequest(unittest.TestCase):
+class uICMPEchoRequest(libpry.AutoTree):
     def test_create(self):
         i = createPacket(IP, ICMPEchoRequest)
-        self.failUnless(i["icmpEchoRequest"])
+        assert i["icmpEchoRequest"]
         i.initialise()
-        self.failUnless(i["icmpEchoRequest"])
+        assert i["icmpEchoRequest"]
     
     def test_payload(self):
         i = createPacket(IP, ICMPEchoRequest)
         expected = "Count FruFru"
         i["icmp"].payload = expected
         i.finalise()
-        self.failUnlessEqual(i["icmp"].payload, expected)
+        assert i["icmp"].payload ==  expected
 
 
-class uICMPTimestampRequest(unittest.TestCase):
+class uICMPTimestampRequest(libpry.AutoTree):
     def test_create(self):
         i = createPacket(IP, ICMPTimestampRequest)
-        self.failUnless(i["icmpTimestampRequest"])
+        assert i["icmpTimestampRequest"]
         i.initialise()
-        self.failUnless(i["icmpTimestampRequest"])
+        assert i["icmpTimestampRequest"]
+
+
+tests = [
+    uLoopback(),
+    uEthernet(),
+    uARP(),
+    uIP(),
+    uIPv6(),
+    uTCP(),
+    uUDP(),
+    uICMPDestinationUnreachable(),
+    uICMPEchoRequest(),
+    uICMPTimestampRequest(),
+]

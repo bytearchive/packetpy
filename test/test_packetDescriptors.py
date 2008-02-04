@@ -1,39 +1,40 @@
-import unittest, array
+import libpry
+import array
 import packet, packet._packetDescriptors
 import pcaptester
 
-class uOptions(unittest.TestCase):
+class uOptions(libpry.AutoTree):
     def test_getset(self):
         i = packet._packetDescriptors.Options(fOo = 1)
-        self.failUnlessEqual(i["foo"], 1)
+        assert i["foo"] ==  1
         i["foo"] = 2
-        self.failUnlessEqual(i["Foo"], 2)
+        assert i["Foo"] ==  2
 
     def test_haskey(self):
         i = packet._packetDescriptors.Options(fOo = 1)
-        self.failUnless(i.has_key("foo"))
-        self.failUnless(i.has_key("Foo"))
+        assert i.has_key("foo")
+        assert i.has_key("Foo")
 
     def test_keys(self):
         i = packet._packetDescriptors.Options(fOo=1, bAr=2)
         k = i.keys()
         k.sort()
-        self.failUnlessEqual(k, ["bAr", "fOo"])
+        assert k, ["bAr" ==  "fOo"]
 
     def test_values(self):
         i = packet._packetDescriptors.Options(fOo=1, bAr=2)
         v = i.values()
         v.sort()
-        self.failUnlessEqual(v, [1, 2])
+        assert v, [1 ==  2]
 
     def test_toStr(self):
         i = packet._packetDescriptors.Options(fOo=1, bAr=2)
-        self.failUnlessEqual(i.toStr(1), "fOo")
-        self.failUnlessEqual(i.toStr(8), "8")
+        assert i.toStr(1) ==  "fOo"
+        assert i.toStr(8) ==  "8"
         
     def test_repr(self):
         i = packet._packetDescriptors.Options(fOo=1, bAr=2)
-        self.failUnlessEqual(repr(i), "Options(fOo=1,bAr=2)")
+        assert repr(i), "Options(fOo=1 == bAr=2)"
 
 class DummyProtocol(packet.packet.Protocol):
     TYPE = "dummy"
@@ -72,25 +73,25 @@ def makeDummy():
     return packet.packet.Packet(DummyProtocol, "\0"*34)
 
 
-class _DescTester(pcaptester.pcapTester):
+class _DescTester(libpry.AutoTree):
     def setUp(self):
         self.p = makeDummy()
     
 
 class uIntField(_DescTester):
     def test_normal(self):
-        self.failUnlessEqual(self.p["dummy"].intfield, 0)
+        assert self.p["dummy"].intfield ==  0
         self.p["dummy"].intfield = 20
-        self.failUnlessEqual(self.p["dummy"].intfield, 20)
+        assert self.p["dummy"].intfield ==  20
 
     def test_options(self):
         self.p["dummy"].intfield = "one"
-        self.failUnlessEqual(self.p["dummy"].intfield, 1)
+        assert self.p["dummy"].intfield ==  1
         self.p["dummy"].intfield = "Two"
-        self.failUnlessEqual(self.p["dummy"].intfield, 2)
+        assert self.p["dummy"].intfield ==  2
 
     def test_doc(self):
-        self.failUnlessEqual(DummyProtocol.intfieldNoOpts, None)
+        assert DummyProtocol.intfieldNoOpts ==  None
         DummyProtocol.intfield
 
     def test_getNone(self):
@@ -99,20 +100,20 @@ class uIntField(_DescTester):
 
 class uHOInt32Field(_DescTester):
     def test_normal(self):
-        self.failUnlessEqual(self.p["dummy"].hoint32, 0)
+        assert self.p["dummy"].hoint32 ==  0
         self.p["dummy"].hoint32 = 20
-        self.failUnlessEqual(self.p["dummy"].hoint32, 20)
+        assert self.p["dummy"].hoint32 ==  20
 
     def test_options(self):
         self.p["dummy"].hoint32 = "one"
-        self.failUnlessEqual(self.p["dummy"].hoint32, 1)
+        assert self.p["dummy"].hoint32 ==  1
         self.p["dummy"].hoint32 = "Two"
-        self.failUnlessEqual(self.p["dummy"].hoint32, 2)
+        assert self.p["dummy"].hoint32 ==  2
 
 
 class uByteField(_DescTester):
     def test_doc(self):
-        self.failUnlessEqual(DummyProtocol.bytefield, None)
+        assert DummyProtocol.bytefield ==  None
 
     def test_set(self):
         self.p["dummy"].bytefield = "\0"
@@ -123,7 +124,7 @@ class uByteField(_DescTester):
 
 class uPaddedString(_DescTester):
     def test_doc(self):
-        self.failUnlessEqual(DummyProtocol.paddedstring, None)
+        assert DummyProtocol.paddedstring ==  None
 
     def test_set(self):
         self.p["dummy"].paddedstring = "foo"
@@ -134,7 +135,7 @@ class uPaddedString(_DescTester):
 
 class uBitField(_DescTester):
     def test_doc(self):
-        self.failUnlessEqual(DummyProtocol.bitfield, None)
+        assert DummyProtocol.bitfield ==  None
 
     def test_set(self):
         self.p["dummy"].bitfield = 1
@@ -145,7 +146,7 @@ class uBitField(_DescTester):
 
 class uPayload(_DescTester):
     def test_doc(self):
-        self.failUnlessEqual(DummyProtocol.payload, None)
+        assert DummyProtocol.payload ==  None
 
     def test_get(self):
         self.p["dummy"].payload
@@ -157,116 +158,127 @@ class uPayload(_DescTester):
 
 class uDescriptorProxy(_DescTester):
     def test_doc(self):
-        self.failUnlessEqual(DummyProtocol.proxy, None)
+        assert DummyProtocol.proxy ==  None
 
 
 class uFlagsField(_DescTester):
     def test_normal(self):
-        self.failUnlessEqual(self.p["dummy"].flagfield, 0)
+        assert self.p["dummy"].flagfield ==  0
         self.p["dummy"].flagfield = 20
-        self.failUnlessEqual(self.p["dummy"].flagfield, 20)
+        assert self.p["dummy"].flagfield ==  20
 
     def test_options_str(self):
         self.p["dummy"].flagfield = "one"
-        self.failUnlessEqual(self.p["dummy"].flagfield, 1)
+        assert self.p["dummy"].flagfield ==  1
         self.p["dummy"].flagfield = "Two"
-        self.failUnlessEqual(self.p["dummy"].flagfield, 2)
+        assert self.p["dummy"].flagfield ==  2
 
     def test_options_list(self):
         self.p["dummy"].flagfield = ["one", "two"]
-        self.failUnlessEqual(self.p["dummy"].flagfield, 3)
+        assert self.p["dummy"].flagfield ==  3
         self.p["dummy"].flagfield = ["Two"]
-        self.failUnlessEqual(self.p["dummy"].flagfield, 2)
+        assert self.p["dummy"].flagfield ==  2
 
     def test_getNone(self):
         DummyProtocol.flagfield
 
+
 class uHOInt32FlagsField(_DescTester):
     def test_normal(self):
-        self.failUnlessEqual(self.p["dummy"].hoint32flags, 0)
+        assert self.p["dummy"].hoint32flags ==  0
         self.p["dummy"].hoint32flags = 20
-        self.failUnlessEqual(self.p["dummy"].hoint32flags, 20)
+        assert self.p["dummy"].hoint32flags ==  20
 
     def test_options_str(self):
         self.p["dummy"].hoint32flags = "one"
-        self.failUnlessEqual(self.p["dummy"].hoint32flags, 1)
+        assert self.p["dummy"].hoint32flags ==  1
         self.p["dummy"].hoint32flags = "Two"
-        self.failUnlessEqual(self.p["dummy"].hoint32flags, 2)
+        assert self.p["dummy"].hoint32flags ==  2
 
     def test_options_list(self):
         self.p["dummy"].hoint32flags = ["one", "two"]
-        self.failUnlessEqual(self.p["dummy"].hoint32flags, 3)
+        assert self.p["dummy"].hoint32flags ==  3
         self.p["dummy"].hoint32flags = ["Two"]
-        self.failUnlessEqual(self.p["dummy"].hoint32flags, 2)
+        assert self.p["dummy"].hoint32flags ==  2
 
 
-class uEthernetAddress(_DescTester):
+class uEthernetAddress(pcaptester.pcapTester):
+    dump = "tcp"
     def test_set(self):
-        self.p = self.getpacket("tcp")
-        self.failUnlessRaises(ValueError, setattr, self.p["ethernet"], "src", "aaa:a:a:a:a:a")
-        self.failUnlessRaises(ValueError, setattr, self.p["ethernet"], "src", "a:a:a:a:a")
+        libpry.raises(
+            ValueError,
+            setattr,
+            self.data["ethernet"],
+            "src",
+            "aaa:a:a:a:a:a"
+        )
+        libpry.raises(
+            ValueError,
+            setattr,
+            self.data["ethernet"],
+            "src",
+            "a:a:a:a:a"
+        )
 
     def test_get(self):
-        self.p["dummy"].ethernetaddr
+        p = makeDummy()
+        p["dummy"].ethernetaddr
 
     def test_doc(self):
-        self.failUnless(repr(DummyProtocol.ethernetaddr))
+        assert repr(DummyProtocol.ethernetaddr)
 
 
 class uIPAddress(pcaptester.pcapTester):
+    dump = "icmp_echo_reply"
     def setUp(self):
-        self.data = self.getpacket("icmp_echo_reply")
+        pcaptester.pcapTester.setUp(self)
         self.ip = self.data["ip"]
 
     def test_set(self):
-        self.failUnlessRaises(ValueError, setattr, self.ip, "src", "1.1.1")
-        self.failUnlessRaises(ValueError, setattr, self.ip, "src", "1.1.1.300")
-        self.failUnlessRaises(ValueError, setattr, self.ip, "src", "1.1.1.a")
+        libpry.raises(ValueError, setattr, self.ip, "src", "1.1.1")
+        libpry.raises(ValueError, setattr, self.ip, "src", "1.1.1.300")
+        libpry.raises(ValueError, setattr, self.ip, "src", "1.1.1.a")
         self.ip.src = "1.1.1.1"
 
     def test_get(self):
         self.ip.src
 
     def test_doc(self):
-        self.failUnlessEqual(DummyProtocol.ipaddr, None)
+        assert DummyProtocol.ipaddr ==  None
 
 
 class uIPv6Address(pcaptester.pcapTester):
-    def setUp(self):
-        self.p = self.getpacket("icmp6_echorequest")
-
+    dump = "icmp6_echorequest"
     def test_set(self):
-        self.failUnlessRaises(ValueError, setattr, self.p["ipv6"], "src", "::1::1")
-        self.failUnlessRaises(ValueError, setattr, self.p["ipv6"], "src", "::123422")
-        self.failUnlessRaises(ValueError, setattr, self.p["ipv6"], "src", "::123422")
-        self.failUnlessRaises(ValueError, setattr, self.p["ipv6"], "src", "1:1:1:1:1::1:1:1:1")
+        libpry.raises(ValueError, setattr, self.data["ipv6"], "src", "::1::1")
+        libpry.raises(ValueError, setattr, self.data["ipv6"], "src", "::123422")
+        libpry.raises(ValueError, setattr, self.data["ipv6"], "src", "::123422")
+        libpry.raises(ValueError, setattr, self.data["ipv6"], "src", "1:1:1:1:1::1:1:1:1")
 
     def test_set_noerr(self):
-        self.p["ipv6"].src = ("::1")
-        self.failUnlessEqual(self.p["ipv6"].src, "::1")
-        self.p["ipv6"].src = ("1::")
-        self.failUnlessEqual(self.p["ipv6"].src, "1::")
-        self.p["ipv6"].src = ("1:2:3::")
-        self.failUnlessEqual(self.p["ipv6"].src, "1:2:3::")
-        self.p["ipv6"].src = ("1:2:3:4:5:6:7:8")
-        self.failUnlessEqual(self.p["ipv6"].src, "1:2:3:4:5:6:7:8")
+        self.data["ipv6"].src = ("::1")
+        assert self.data["ipv6"].src ==  "::1"
+        self.data["ipv6"].src = ("1::")
+        assert self.data["ipv6"].src ==  "1::"
+        self.data["ipv6"].src = ("1:2:3::")
+        assert self.data["ipv6"].src ==  "1:2:3::"
+        self.data["ipv6"].src = ("1:2:3:4:5:6:7:8")
+        assert self.data["ipv6"].src ==  "1:2:3:4:5:6:7:8"
 
     def test_abbreviation(self):
-        self.p["ipv6"].src = ("0:0:0:0:0:0:0:1")
-        self.failUnlessEqual(self.p["ipv6"].src, "::1")
-        self.p["ipv6"].src = ("1:0:0:0:0:0:0:1")
-        self.failUnlessEqual(self.p["ipv6"].src, "1::1")
-        self.p["ipv6"].src = ("fe:80:0:0:0:0:0:1")
-        self.failUnlessEqual(self.p["ipv6"].src, "fe:80::1")
+        self.data["ipv6"].src = ("0:0:0:0:0:0:0:1")
+        assert self.data["ipv6"].src ==  "::1"
+        self.data["ipv6"].src = ("1:0:0:0:0:0:0:1")
+        assert self.data["ipv6"].src ==  "1::1"
+        self.data["ipv6"].src = ("fe:80:0:0:0:0:0:1")
+        assert self.data["ipv6"].src ==  "fe:80::1"
 
     def test_doc(self):
-        self.failUnlessEqual(DummyProtocol.ip6addr, None)
+        assert DummyProtocol.ip6addr ==  None
 
 
 class uIPAddressList(pcaptester.pcapTester):
-    def setUp(self):
-        self.p = self.getpacket("ip_recordroute", pclass=packet.packet.Loopback)
-
+    dump = "ip_recordroute"
     def test_get(self):
         expected = [
                 "0.255.255.255",
@@ -279,18 +291,36 @@ class uIPAddressList(pcaptester.pcapTester):
                 "207.47.74.0",
                 "28.0.0.0"
         ]
-        self.failUnlessEqual(self.p["ip"].options.addrlist, expected)
+        assert self.data["ip"].options.addrlist ==  expected
 
     def test_set(self):
         expected = [
             "192.168.0.1",
             "192.168.0.2"
         ]
-        self.p["ip"].options.addrlist = expected
-        self.failUnlessEqual(self.p["ip"].options.addrlist, expected)
+        self.data["ip"].options.addrlist = expected
+        assert self.data["ip"].options.addrlist ==  expected
 
     def test_initerr(self):
-        self.failUnlessRaises(ValueError, packet._packetDescriptors.IPAddressList, 1, 5)
+        libpry.raises(ValueError, packet._packetDescriptors.IPAddressList, 1, 5)
 
     def test_get_none(self):
         DummyProtocol.ipaddresslist
+
+
+tests = [
+    uOptions(),
+    uIntField(),
+    uHOInt32Field(),
+    uByteField(),
+    uPaddedString(),
+    uBitField(),
+    uPayload(),
+    uDescriptorProxy(),
+    uFlagsField(),
+    uHOInt32FlagsField(),
+    uEthernetAddress(),
+    uIPAddress(),
+    uIPv6Address(),
+    uIPAddressList(),
+]
