@@ -298,6 +298,14 @@ class Dumper:
         _pcap.dump_close(self._dhandle)
         self._dhandle = None
 
+    def ftell(self):
+        """
+            Byte offset of dump file.
+        """
+        if not self._dhandle:
+            raise PcapError("Dumper already closed.")
+        return _pcap.dump_ftell(self._dhandle)
+
     def __del__(self):
         if self._dhandle:
             self.close()

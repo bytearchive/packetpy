@@ -73,6 +73,18 @@ static PyObject *dump_open(PyObject *self, PyObject *args){
     return PyCObject_FromVoidPtr((void*)dumper, NULL);
 }
 
+
+static PyObject *dump_ftell(PyObject *self, PyObject *args){
+    PyObject *dptr;
+    int offset; 
+    if (!PyArg_ParseTuple(args, "O", &dptr))
+        return NULL;
+
+    offset = pcap_dump_ftell((pcap_dumper_t*)PyCObject_AsVoidPtr(dptr));
+    return Py_BuildValue("l", offset);
+}
+
+
 static PyObject *open_offline(PyObject *self, PyObject *args){
     char ebuf[PCAP_ERRBUF_SIZE];
     char *filename;
@@ -411,6 +423,7 @@ static PyMethodDef PcapMethods[] = {
     {"open_dead",       open_dead,   METH_VARARGS,      "Open a dead feed."},
     {"close",           closeptr,       METH_VARARGS,   "Close a pointer."},
     {"dump_close",      dump_close,     METH_VARARGS,   "Close a dump file."},
+    {"dump_ftell",      dump_ftell,     METH_VARARGS,   "Get current dumper file offset."},
     {"datalink",        datalink,       METH_VARARGS,   "Get the link layer type."},
     {"dispatch",        dispatch,       METH_VARARGS,   "Dispatch."},
 	{"loop",            loop,           METH_VARARGS,   "Loop."},

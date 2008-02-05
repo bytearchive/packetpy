@@ -171,6 +171,7 @@ class uPcapDump(libpry.AutoTree):
 
     def test_dump(self):
         self.l.loop(5, self.d)
+        assert self.d.ftell()
         self.d.close()
 
         # Now we read our output back:
