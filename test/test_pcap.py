@@ -1,6 +1,7 @@
 import libpry
 import os, sys
 import packet.pcap
+import packet.packet
 
 class TestError(Exception): pass
 
@@ -116,6 +117,17 @@ class uPcapOffline(libpry.AutoTree):
         )
 
 
+class uPcapDead(libpry.AutoTree):
+    """
+        These tests have to be run with superuser privs...
+    """
+    def setUp(self):
+        self.l = packet.pcap.Dead(packet.packet.Ethernet)
+
+    def test_foo(self):
+        assert self.l.datalink() == packet.pcap.DLTLookup[packet.packet.Ethernet]
+
+
 class uPcapLive(libpry.AutoTree):
     """
         These tests have to be run with superuser privs...
@@ -219,6 +231,7 @@ tests = [
     uBPFProgram(),
     uPcapOffline(),
     uPcapDump(),
+    uPcapDead(),
     uPacketFactory(),
     uMisc(),
 ]

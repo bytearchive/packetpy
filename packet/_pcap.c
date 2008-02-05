@@ -89,6 +89,24 @@ static PyObject *open_offline(PyObject *self, PyObject *args){
     return PyCObject_FromVoidPtr((void*)ret, NULL);
 }
 
+
+static PyObject *open_dead(PyObject *self, PyObject *args){
+    int linktype, snaplen;
+    char ebuf[PCAP_ERRBUF_SIZE];
+    pcap_t *ret;
+
+    if (!PyArg_ParseTuple(args, "ii", &linktype, &snaplen))
+        return NULL;
+
+    ret = pcap_open_dead(linktype, snaplen);
+    if (!ret){
+        PyErr_SetString(PcapError, ebuf);
+        return NULL;
+    }
+    return PyCObject_FromVoidPtr((void*)ret, NULL);
+}
+
+
 static PyObject *dump_close(PyObject *self, PyObject *args){
     PyObject *dptr;
     if (!PyArg_ParseTuple(args, "O", &dptr))
@@ -321,7 +339,6 @@ static PyObject *setfilter(PyObject *self, PyObject *args){
     return Py_None;
 }
 
-
 static PyObject *snapshot(PyObject *self, PyObject *args){
     PyObject *dptr;
     int snaplen;
@@ -391,6 +408,7 @@ static PyMethodDef PcapMethods[] = {
     {"open_live",       open_live,      METH_VARARGS,   "Open a device."},
     {"dump_open",       dump_open,      METH_VARARGS,   "Open a dump file."},
     {"open_offline",    open_offline,   METH_VARARGS,   "Open a file for reading."},
+    {"open_dead",       open_dead,   METH_VARARGS,      "Open a dead feed."},
     {"close",           closeptr,       METH_VARARGS,   "Close a pointer."},
     {"dump_close",      dump_close,     METH_VARARGS,   "Close a dump file."},
     {"datalink",        datalink,       METH_VARARGS,   "Get the link layer type."},

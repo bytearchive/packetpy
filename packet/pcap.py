@@ -21,10 +21,9 @@
 
 import sys, datetime
 from _global import *
-import _pcap
-import packet
+import _pcap, packet, utils
 
-DLTLookup = {
+DLTLookup = utils.DoubleAssociation({
     #0:          Null,
     1:          packet.Ethernet,
     # OpenBSD Specific
@@ -34,7 +33,7 @@ DLTLookup = {
     12:         packet.Loopback
     #DLT_IEEE802     6
     #DLT_RAW         12
-}
+})
 
 def isPCapFile(fname):
     try:
@@ -65,7 +64,12 @@ class BPFProgram:
         if not feed._phandle:
             raise PcapError("Feed not connected.")
         try:
-            return _pcap.compile(feed._phandle, filterstr, optimise, feed.lookupnet()[1])
+            return _pcap.compile(
+                        feed._phandle,
+                        filterstr,
+                        optimise,
+                        feed.lookupnet()[1]
+                    )
         except PcapError, val:
             raise PcapError(val)
 
@@ -83,7 +87,9 @@ class Interpreter:
 
     def __call__(self, pkt, tstamp, length):
         p = packet.Packet(self.pclass, pkt)
-        dtime = datetime.datetime.fromtimestamp(tstamp[0] + (float(tstamp[1])/1000000))
+        dtime = datetime.datetime.fromtimestamp(
+                    tstamp[0] + (float(tstamp[1])/1000000)
+                )
         self.callback(p, dtime, length)
         
 
@@ -186,13 +192,24 @@ class _PcapFeed:
             self.close()
 
 
+class Dead(_PcapFeed):
+    """
+        A dummy interface.
+    """
+    def __init__(self, linktype, snaplen=96):
+        if not isinstance(linktype, int):
+            linktype = DLTLookup[linktype]
+        self._phandle = _pcap.open_dead(linktype, snaplen)
+
+
 class Live(_PcapFeed):
     """
         Monitor a live interface.
     """
     def __init__(self, interface=None, snaplen=96, promisc=1, timeout=1000):
         """
-            If no interface is specified, a suitable interface is automatically chosen.
+            If no interface is specified, a suitable interface is automatically
+            chosen.
         """
         _PcapFeed.__init__(self)
         if interface is None:
@@ -200,7 +217,8 @@ class Live(_PcapFeed):
                 interface = _pcap.lookupdev()
             except PcapError, val:
                 raise PcapError(val)
-        self.interface, self.snaplen, self.promisc, self.timeout = interface, snaplen, promisc, timeout
+        self.interface, self.snaplen = interface, snaplen
+        self.promisc, self.timeout =  promisc, timeout
         try:
             self._phandle = _pcap.open_live(interface, snaplen, promisc, timeout)
         except PcapError, val:

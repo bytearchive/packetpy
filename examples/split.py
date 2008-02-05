@@ -3,6 +3,7 @@
 """
 Splits a dump file into n chunks of COUNT packets
 """
+
 from optparse import OptionParser
 import packet.pcap
 
@@ -42,7 +43,7 @@ class Handler(object):
         self.dumper.close()
             
 
-if __name__ == "__main__":
+def main():
     parser = OptionParser()
     parser.add_option(
         "--input", "-i", dest="input",
@@ -62,3 +63,7 @@ if __name__ == "__main__":
     h = Handler(feed, options.output, options.count)
     feed.dispatch(-1, h.callback)
     h.close()
+
+
+if __name__ == "__main__":
+    main()
