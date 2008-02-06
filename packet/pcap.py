@@ -196,7 +196,7 @@ class Dead(_PcapFeed):
     """
         A dummy interface.
     """
-    def __init__(self, linktype, snaplen=96):
+    def __init__(self, linktype, snaplen=1500):
         if not isinstance(linktype, int):
             linktype = DLTLookup[linktype]
         self._phandle = _pcap.open_dead(linktype, snaplen)
