@@ -109,6 +109,9 @@ class uPcapOffline(libpry.AutoTree):
     def test_fileno(self):
         assert self.l.fileno() > 0
 
+    def test_fileno(self):
+        assert self.l.ftell()
+
     def test_bad_dump(self):
         libpry.raises(
             packet.pcap.PcapError,

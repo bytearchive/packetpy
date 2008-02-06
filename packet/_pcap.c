@@ -416,6 +416,18 @@ static PyObject *pfileno(PyObject *self, PyObject *args){
 }
 
 
+static PyObject *pftell(PyObject *self, PyObject *args){
+    PyObject *dptr;
+	FILE *f;
+
+    if (!PyArg_ParseTuple(args, "O", &dptr))
+        return NULL;
+
+    f = pcap_file((pcap_t*)PyCObject_AsVoidPtr(dptr));
+    return Py_BuildValue("l", ftell(f));
+}
+
+
 static PyMethodDef PcapMethods[] = {
     {"open_live",       open_live,      METH_VARARGS,   "Open a device."},
     {"dump_open",       dump_open,      METH_VARARGS,   "Open a dump file."},
@@ -438,6 +450,7 @@ static PyMethodDef PcapMethods[] = {
     {"snapshot",        snapshot,       METH_VARARGS,   "Return the snapshot length passed to pcap_live."},
     {"is_swapped",      is_swapped,     METH_VARARGS,   "True if the current savefile uses a different byte order than the current system."},
     {"fileno",			pfileno,		METH_VARARGS,   "Returns the file descriptor number of the current file."},
+    {"ftell",			pftell,		METH_VARARGS,   "Returns the file position for an offline feed."},
     {"version",         version,        METH_VARARGS,   "Return the major and minor version of the pcap used to write the save file."},
     {"stats",           stats,          METH_VARARGS,   "Get stats for the feed."},
     {NULL, NULL, 0, NULL}        /* Sentinel */

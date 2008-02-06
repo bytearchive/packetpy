@@ -283,6 +283,9 @@ class Offline(_PcapFeed):
     def fileno(self):
         return _pcap.fileno(self._phandle)
 
+    def ftell(self):
+        return _pcap.ftell(self._phandle)
+
 
 class Dumper:
     def __init__(self, feed, filename):
