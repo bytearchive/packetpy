@@ -1,4 +1,3 @@
-
 import libpry
 import packet.utils as utils
 
@@ -15,4 +14,3 @@ class Multiord(libpry.AutoTree):
 tests = [
     Multiord()
 ]
-
