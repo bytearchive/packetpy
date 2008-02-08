@@ -41,6 +41,7 @@ def multichar(a, width):
         The return string will be padded to the left to ensure that it is of
         length "width".
     """
+    a = int(a)
     chars = []
     while (a != 0):
         chars.insert(0, chr(a%256))

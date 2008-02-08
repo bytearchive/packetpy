@@ -110,18 +110,6 @@ class _IPBase(_AddrBase):
     def __repr__(self):
         return self.address
 
-    def _getMask(self, mask, func):
-        """
-            Takes a numeric mask, and a prefix function.
-        """
-        if mask is None:
-            return self.MAXMASK
-        try:
-            int(mask)
-            return mask
-        except (TypeError, ValueError):
-            return func(mask)
-
 
 class IPAddress(_IPBase):
     def __init__(self, address):
@@ -165,7 +153,7 @@ class IPMask(IPAddress, _MaskMixin):
     def __init__(self, mask):
         if mask is None:
             mask = 32
-        if isNumberLike(mask):
+        if utils.isNumberLike(mask):
             mask = self._ipFromPrefix(mask)
         IPAddress.__init__(self, mask)
         self.prefix = self._countPrefix(self.bytes)
@@ -244,7 +232,7 @@ class IP6Mask(IP6Address, _MaskMixin):
     def __init__(self, mask):
         if mask is None:
             mask = 128
-        if isNumberLike(mask):
+        if utils.isNumberLike(mask):
             mask = self._ip6FromPrefix(mask)
         IP6Address.__init__(self, mask)
         self.prefix = self._countPrefix(self.bytes)
@@ -270,7 +258,7 @@ class IP6Mask(IP6Address, _MaskMixin):
 
 def Address(address):
     """
-        Create an address, and auto-detectint the type.
+        Create an address, and auto-detecting the type.
     """
     if isinstance(address, _AddrBase):
         return address
@@ -292,18 +280,18 @@ def Address(address):
 def AddressFromBytes(bytes):
     if len(bytes) == 4:
         return IPAddress.fromBytes(bytes)
+    elif len(bytes) == 6:
+        return EthernetAddress.fromBytes(bytes)
     elif len(bytes) == 16:
         return IP6Address.fromBytes(bytes)
     else:
-        raise ValueError, "Address not recognized."
+        raise ValueError, "Not a valid address."
 
 
 def Mask(address):
     """
         Create a nework mask object, and auto-detecting the type.
     """
-    if isinstance(address, _AddrBase):
-        return address
     try:
         return IPMask(address)
     except ValueError:
