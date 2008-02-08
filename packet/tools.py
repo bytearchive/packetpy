@@ -15,35 +15,34 @@ class Splitter:
             self.packetcounter = 0
             fname = self.dst + ".%0.3i"%self.nfile
             self.outfiles.append(fname)
-            self.dumper = packet.pcap.Dumper(
-                packet.pcap.Dead(self.datalink),
+            self.dumper = pcap.Dumper(
+                pcap.Dead(self.datalink),
                 fname
             )
-            self.newfile(fname)
+            self.newFile(fname, self.partsize)
         self.packetcounter += 1
         self.dumper(pack, ts, length)
-        self.tick(packetcounter, self.dumper.ftell())
+        self.tick(self.packetcounter, self.dumper.ftell())
 
     def __call__(self, files, n, dst):
         self.dst = dst
-        self.totalsize = 0
+        totalsize = 0
         for i in files:
-            self.totalsize += os.stat(i).st_size
-        self.partsize = self.totalsize/float(n)
+            totalsize += os.stat(i).st_size
+        self.partsize = totalsize/float(n)
         self.dumper = None
         self.nfile = 0
         self.datalink = None
         self.outfiles = []
-
-        for i in self.files:
-            f = packet.pcap.Offline(i)
+        for i in files:
+            f = pcap.Offline(i)
             self.datalink = f.datalink()
             f.loop(-1, self.callback)
         self.dumper.close()
         self.done()
         return self.outfiles
 
-    def newfile(self, fname):
+    def newFile(self, fname, size):
         """
             Hook method that gets called every time a new destination file is
             opened for writing.

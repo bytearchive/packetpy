@@ -1,39 +1,29 @@
-import StringIO, os.path
+import os.path
 import libpry
 import packet.tools as tools
         
 class uSplitter(libpry.TmpDirMixin, libpry.AutoTree):
+    def test_init(self):
+        tools.Splitter()
+
     def test_nonexistent(self):
+        s = tools.Splitter()
         libpry.raises(
-            "no such file", tools.Splitter,
-            4,
-            self["tmpdir"],
-            ["nonexistent"]
+            "no such file",
+            s, ["nonexistent"], 4, self["tmpdir"],
         )
         
-    def test_init(self):
-        s = tools.Splitter(
-                4,
-                self["tmpdir"],
-                [
-                    "data/dump.sequence1",
-                    "data/dump.sequence2"
-                ]
-            )
-        assert s.totalsize == 44848
-                    
     def test_call(self):
-        io = StringIO.StringIO()
-        s = tools.Splitter(
-                4,
-                self["tmpdir"],
-                [
-                    "data/dump.sequence1",
-                    "data/dump.sequence2"
-                ],
-                out = io
-            )
-        files = s()
+        s = tools.Splitter()
+        files = s(
+            [
+                "splitterdata/dump.sequence1",
+                "splitterdata/dump.sequence2"
+            ],
+            4,
+            os.path.join(self["tmpdir"], "pack"),
+        )
+        assert len(files) == 4
         for i in files:
             assert os.path.isfile(i)
         
