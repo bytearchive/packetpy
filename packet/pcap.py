@@ -21,9 +21,9 @@
 
 import sys, datetime
 from _global import *
-import _pcap, packet, utils
+import _pcap, packet, _utils
 
-DLTLookup = utils.DoubleAssociation({
+DLTLookup = _utils.DoubleAssociation({
     #0:          Null,
     1:          packet.Ethernet,
     # OpenBSD Specific

@@ -20,7 +20,7 @@
 # SOFTWARE.
 
 import socket
-import utils
+import _utils, address
 
 
 class Options:
@@ -252,7 +252,7 @@ class FlagsField(BitField):
             int(val)
         except (ValueError, TypeError):
             if self.options:
-                if utils.isStringLike(val):
+                if _utils.isStringLike(val):
                     if self.options.has_key(str(val)):
                         val = self.options[str(val)]
                 else:
@@ -292,10 +292,10 @@ class IPAddress(object):
     def __get__(self, obj, objtype):
         if obj is None:
             return None
-        return utils.IPAddress.fromBytes(obj._getByteField(self.frm, 4)).address
+        return address.IPAddress.fromBytes(obj._getByteField(self.frm, 4)).address
 
     def __set__(self, obj, val):
-        bytes = utils.IPAddress(val).bytes
+        bytes = address.IPAddress(val).bytes
         obj._setByteField(self.frm, 4, bytes)
 
 
@@ -318,13 +318,13 @@ class IPAddressList(object):
             return None
         addrlist = []
         for i in range(self.frm, self.tlen, 4):
-            addrlist.append(utils.IPAddress.fromBytes(obj._getByteField(i, 4)).address)
+            addrlist.append(address.IPAddress.fromBytes(obj._getByteField(i, 4)).address)
         return addrlist
 
     def __set__(self, obj, val):
         bytes = []
         for i in val:
-            bytes.append(utils.IPAddress(i).bytes)
+            bytes.append(address.IPAddress(i).bytes)
         bytes = "".join(bytes)
         obj._splice(self.frm, self.tlen, bytes)
         obj.length = len(bytes) + 3
@@ -345,10 +345,10 @@ class IPv6Address(object):
     def __get__(self, obj, objtype):
         if obj is None:
             return None
-        return utils.IP6Address.fromBytes(obj._getByteField(self.frm, 16)).address
+        return address.IP6Address.fromBytes(obj._getByteField(self.frm, 16)).address
 
     def __set__(self, obj, val):
-        obj._setByteField(self.frm, 16, utils.IP6Address(val).bytes)
+        obj._setByteField(self.frm, 16, address.IP6Address(val).bytes)
         
 
 class EthernetAddress(object):
@@ -362,10 +362,10 @@ class EthernetAddress(object):
     def __get__(self, obj, objtype):
         if obj is None:
             return None
-        return utils.EthernetAddress.fromBytes(obj._getByteField(self.frm, 6)).address
+        return address.EthernetAddress.fromBytes(obj._getByteField(self.frm, 6)).address
 
     def __set__(self, obj, val):
-        obj._setByteField(self.frm, 6, utils.EthernetAddress(val).bytes)
+        obj._setByteField(self.frm, 6, address.EthernetAddress(val).bytes)
 
 
 class Payload(object):

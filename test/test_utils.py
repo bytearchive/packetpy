@@ -1,9 +1,8 @@
-
 import libpry
-import packet.utils as utils
+import packet._utils as utils
 
 
-class Multiord(libpry.AutoTree):
+class uMultiord(libpry.AutoTree):
     def test_convert(self):
         assert utils.multiord("\x11") == 0x11
         assert utils.multiord("\x11\x11") == (256 * 0x11) + 0x11
@@ -12,7 +11,12 @@ class Multiord(libpry.AutoTree):
         assert utils.multiord("\x01") == 1
 
 
-tests = [
-    Multiord()
-]
+class uMultichar(libpry.AutoTree):
+    def test_convert(self):
+        libpry.raises("too wide", utils.multichar, 999999999, 2)
 
+
+tests = [
+    uMultiord(),
+    uMultichar(),
+]
