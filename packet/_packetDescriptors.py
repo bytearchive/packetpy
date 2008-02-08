@@ -20,7 +20,7 @@
 # SOFTWARE.
 
 import socket
-import utils, address
+import _utils, address
 
 
 class Options:
@@ -252,7 +252,7 @@ class FlagsField(BitField):
             int(val)
         except (ValueError, TypeError):
             if self.options:
-                if utils.isStringLike(val):
+                if _utils.isStringLike(val):
                     if self.options.has_key(str(val)):
                         val = self.options[str(val)]
                 else:
