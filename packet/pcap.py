@@ -157,11 +157,13 @@ class _PcapFeed:
         self._nextVal = None 
         return x
 
+    #begin nocover
     def inject(self, packet):
         try:
             _pcap.inject(self._phandle, packet)
         except PcapError, val:
             raise PcapError(val)
+    #end nocover
 
     def datalink(self):
         """
@@ -172,10 +174,14 @@ class _PcapFeed:
         return _pcap.datalink(self._phandle)
 
     def _setfilter(self, bpfprog):
+        if not self._phandle:
+            raise PcapError("Not connected.")
         try:
             _pcap.setfilter(self._phandle, bpfprog._bpf)
+        #begin nocover
         except PcapError, val:
             raise PcapError(val)
+        #end nocover
 
     def filter(self, filterstr):
         bpf = BPFProgram(self, filterstr)
@@ -215,8 +221,10 @@ class Live(_PcapFeed):
         if interface is None:
             try:
                 interface = _pcap.lookupdev()
+            #begin nocover
             except PcapError, val:
                 raise PcapError(val)
+            #end nocover
         self.interface, self.snaplen = interface, snaplen
         self.promisc, self.timeout =  promisc, timeout
         try:
@@ -230,8 +238,10 @@ class Live(_PcapFeed):
         """
         try:
             return _pcap.lookupnet(self.interface)
+        #begin nocover
         except PcapError, val:
             raise PcapError(val)
+        #end nocover
 
     def snapshot(self):
         """

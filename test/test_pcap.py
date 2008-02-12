@@ -15,6 +15,21 @@ def errFunc(*args):
     raise packet.pcap.PcapError(1)
 
 
+class uInterpreter(libpry.AutoTree):
+    def test_init(self):
+        libpry.raises(
+            "unknown link layer type",
+            packet.pcap.Interpreter, "nonexistent", None, None
+        )
+
+        p = packet.pcap.Interpreter(
+            1,
+            None,
+            packet.packet.Ethernet
+        )
+        assert p.pclass == packet.packet.Ethernet
+
+
 class uBPFProgram(libpry.AutoTree):
     def setUp(self):
         self.l = packet.pcap.Offline("pcap_data/tdump")
@@ -63,11 +78,10 @@ class uPcapOffline(libpry.AutoTree):
     def test___int__(self):
         assert int(self.l)==self.l.fileno()
 
-    #def test__setfilter(self):
-        ## The _pcap library causes a segment fault when this test is run
-        #self.bpf = packet.pcap.BPFProgram(self.l, "")
-        #self.l.close()
-        #libpry.raises(packet.pcap.PcapError, self.l._setfilter, self.bpf)
+    def test__setfilter(self):
+        bpf = packet.pcap.BPFProgram(self.l, "icmp")
+        self.l.close()
+        libpry.raises("not connected", self.l._setfilter, bpf)
 
     def test_datalink(self):
         assert self.l.datalink() ==  1
@@ -92,6 +106,7 @@ class uPcapOffline(libpry.AutoTree):
         libpry.raises(TestError, self.l.loop, 5, errHandler)
 
     def test_lookupnet(self):
+        # NOTE: This test may fail validly if we have no IP addresses assigned
         assert self.l.lookupnet() == (0, 0)
 
     def test_filter(self):
@@ -139,7 +154,10 @@ class uPcapLive(libpry.AutoTree):
         self.l = packet.pcap.Live()
 
     def tearDown(self):
-        self.l.close()
+        try:
+            self.l.close()
+        except packet.pcap.PcapError:
+            pass
 
     def test_inject(self):
         def injector(packet, *args):
@@ -156,7 +174,12 @@ class uPcapLive(libpry.AutoTree):
 
     def test_stats(self):
         assert self.l.stats()
+        self.l.close()
+        libpry.raises("not connected", self.l.stats)
     
+    def test_err(self):
+        libpry.raises("no such device", packet.pcap.Live, interface="nonexistent")
+
 
 class uPcapDump(libpry.AutoTree):
     def setUp(self):
@@ -232,6 +255,7 @@ class uMisc(libpry.AutoTree):
 
 
 tests = [
+    uInterpreter(),
     uBPFProgram(),
     uPcapOffline(),
     uPcapDump(),
