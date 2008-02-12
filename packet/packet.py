@@ -402,14 +402,14 @@ class Protocol(object):
 def ipOptionFactory(parent, ipproto, offset):
     # We inspect the first byte of the Options to find the initial Option type.
     optionJmpTable = {
-               _IPOption._TypeOptions["EndOfList"]:               IPOptionEndOfList,
-               _IPOption._TypeOptions["NOP"]:                     IPOptionNOP,
-               _IPOption._TypeOptions["Security"]:                IPOptionSecurity,
-               _IPOption._TypeOptions["LooseSourceRouting"]:      IPOptionLooseSourceRouting,
-               _IPOption._TypeOptions["StrictSourceRouting"]:     IPOptionStrictSourceRouting,
-               _IPOption._TypeOptions["RecordRoute"]:             IPOptionRecordRoute,
-               _IPOption._TypeOptions["StreamID"]:                IPOptionStreamID,
-               _IPOption._TypeOptions["InternetTimestamp"]:       IPOptionInternetTimestamp,
+       _IPOption._TypeOptions["EndOfList"]:             IPOptionEndOfList,
+       _IPOption._TypeOptions["NOP"]:                   IPOptionNOP,
+       _IPOption._TypeOptions["Security"]:              IPOptionSecurity,
+       _IPOption._TypeOptions["LooseSourceRouting"]:    IPOptionLooseSourceRouting,
+       _IPOption._TypeOptions["StrictSourceRouting"]:   IPOptionStrictSourceRouting,
+       _IPOption._TypeOptions["RecordRoute"]:           IPOptionRecordRoute,
+       _IPOption._TypeOptions["StreamID"]:              IPOptionStreamID,
+       _IPOption._TypeOptions["InternetTimestamp"]:     IPOptionInternetTimestamp,
     }
     opt = _IPOption(parent, ipproto, offset)
     if optionJmpTable.has_key(opt.optionType):

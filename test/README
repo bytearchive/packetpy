@@ -3,3 +3,6 @@ This test suite uses the pry unit testing engine. You can download it here:
 
         http://dev.nullcube.com
 
+A small part of this test suite needs to run as root, in order to work with a
+real network interface. These tests will be disabled when the suite is run as a
+non-priveleged user, but code coverage will be slightly reduced.

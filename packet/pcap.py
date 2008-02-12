@@ -102,6 +102,13 @@ class _PcapFeed:
     def __init__(self):
         self._phandle = None
 
+    @property
+    def safe_phandle(self):
+        if not self._phandle:
+            raise PcapError("Not connected.")
+        else:
+            return self._phandle
+
     def loop(self, cnt, callback, interpret=0, pclass=None):
         """
             The callback function has the following format:
@@ -116,12 +123,10 @@ class _PcapFeed:
             packet is binary data, and the timestamp is a tuple of the form
             (sec, usec).
         """
-        if not self._phandle:
-            raise PcapError("Not connected.")
         if interpret:
             callback = Interpreter(self.datalink(), callback, pclass)
         try:
-            _pcap.loop(self._phandle, cnt, callback)
+            _pcap.loop(self.safe_phandle, cnt, callback)
         except PcapError, val:
             raise PcapError(val)
 
@@ -139,12 +144,10 @@ class _PcapFeed:
             packet is binary data, and the timestamp is a tuple of the form
             (sec, usec).
         """
-        if not self._phandle:
-            raise PcapError("Not connected.")
         if interpret:
             callback = Interpreter(self.datalink(), callback, pclass)
         try:
-            _pcap.dispatch(self._phandle, cnt, callback)
+            _pcap.dispatch(self.safe_phandle, cnt, callback)
         except PcapError, val:
             raise PcapError(val)
 
@@ -160,7 +163,7 @@ class _PcapFeed:
     #begin nocover
     def inject(self, packet):
         try:
-            _pcap.inject(self._phandle, packet)
+            _pcap.inject(self.safe_phandle, packet)
         except PcapError, val:
             raise PcapError(val)
     #end nocover
@@ -169,15 +172,11 @@ class _PcapFeed:
         """
             Returns the link layer type. 
         """
-        if not self._phandle:
-            raise PcapError("Not connected.")
-        return _pcap.datalink(self._phandle)
+        return _pcap.datalink(self.safe_phandle)
 
     def _setfilter(self, bpfprog):
-        if not self._phandle:
-            raise PcapError("Not connected.")
         try:
-            _pcap.setfilter(self._phandle, bpfprog._bpf)
+            _pcap.setfilter(self.safe_phandle, bpfprog._bpf)
         #begin nocover
         except PcapError, val:
             raise PcapError(val)
@@ -188,9 +187,7 @@ class _PcapFeed:
         self._setfilter(bpf)
 
     def close(self):
-        if not self._phandle:
-            raise PcapError("Not connected.")
-        _pcap.close(self._phandle)
+        _pcap.close(self.safe_phandle)
         self._phandle = None
 
     def __del__(self):
@@ -249,12 +246,10 @@ class Live(_PcapFeed):
             This method is redundant, since the snapshot length can also be
             obtained by simply checking self.snaplen.
         """
-        return _pcap.snapshot(self._phandle)
+        return _pcap.snapshot(self.safe_phandle)
 
     def stats(self):
-        if not self._phandle:
-            raise PcapError("Not connected.")
-        return _pcap.stats(self._phandle)
+        return _pcap.stats(self.safe_phandle)
 
 
 class Offline(_PcapFeed):
@@ -281,43 +276,47 @@ class Offline(_PcapFeed):
             Is the byte order of the save file different from that of
             the current system?
         """
-        return _pcap.is_swapped(self._phandle)
+        return _pcap.is_swapped(self.safe_phandle)
 
     def version(self):
         """
             Return the major and minor versions of the pcap used to write the
             save file.
         """
-        return _pcap.version(self._phandle)
+        return _pcap.version(self.safe_phandle)
 
     def fileno(self):
-        return _pcap.fileno(self._phandle)
+        return _pcap.fileno(self.safe_phandle)
 
     def ftell(self):
-        return _pcap.ftell(self._phandle)
+        return _pcap.ftell(self.safe_phandle)
 
 
-class Dumper:
+class Dumper(object):
     def __init__(self, feed, filename):
         self.feed, self.filename = feed, filename
+        self._dhandle = None
         try:
-            self._dhandle = _pcap.dump_open(feed._phandle, filename)
+            self._dhandle = _pcap.dump_open(feed.safe_phandle, filename)
         except PcapError, val:
             raise PcapError(val)
 
-    def close(self):
+    @property
+    def safe_dhandle(self):
         if not self._dhandle:
-            raise PcapError("Dumper already closed.")
-        _pcap.dump_close(self._dhandle)
+            raise PcapError("Not connected.")
+        else:
+            return self._dhandle
+
+    def close(self):
+        _pcap.dump_close(self.safe_dhandle)
         self._dhandle = None
 
     def ftell(self):
         """
             Byte offset of dump file.
         """
-        if not self._dhandle:
-            raise PcapError("Dumper already closed.")
-        return _pcap.dump_ftell(self._dhandle)
+        return _pcap.dump_ftell(self.safe_dhandle)
 
     def __del__(self):
         if self._dhandle:

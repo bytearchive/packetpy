@@ -126,6 +126,7 @@ class uPcapOffline(libpry.AutoTree):
 
     def test_fileno(self):
         assert self.l.ftell()
+        self.l.close()
 
     def test_bad_dump(self):
         libpry.raises(
@@ -135,7 +136,7 @@ class uPcapOffline(libpry.AutoTree):
         )
 
 
-class uPcapDead(libpry.AutoTree):
+class uDead(libpry.AutoTree):
     """
         These tests have to be run with superuser privs...
     """
@@ -146,7 +147,7 @@ class uPcapDead(libpry.AutoTree):
         assert self.l.datalink() == packet.pcap.DLTLookup[packet.packet.Ethernet]
 
 
-class uPcapLive(libpry.AutoTree):
+class uLive(libpry.AutoTree):
     """
         These tests have to be run with superuser privs...
     """
@@ -181,7 +182,7 @@ class uPcapLive(libpry.AutoTree):
         libpry.raises("no such device", packet.pcap.Live, interface="nonexistent")
 
 
-class uPcapDump(libpry.AutoTree):
+class uDumper(libpry.AutoTree):
     def setUp(self):
         self.l = packet.pcap.Offline("pcap_data/tdump")
         self.d = packet.pcap.Dumper(self.l, "pcap_data/output")
@@ -194,6 +195,15 @@ class uPcapDump(libpry.AutoTree):
 
     def test_close(self):
         self.d.close()
+
+    def test_del(self):
+        del self.d
+
+    def test_err(self):
+        libpry.raises(
+            "is a directory",
+            packet.pcap.Dumper, self.l, "pcap_data"
+        )
 
     def test_dump(self):
         self.l.loop(5, self.d)
@@ -258,10 +268,10 @@ tests = [
     uInterpreter(),
     uBPFProgram(),
     uPcapOffline(),
-    uPcapDump(),
-    uPcapDead(),
+    uDumper(),
+    uDead(),
     uPacketFactory(),
     uMisc(),
 ]
 if os.geteuid() == 0:
-    tests.append(uPcapLive())
+    tests.append(uLive())
