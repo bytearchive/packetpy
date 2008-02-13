@@ -211,14 +211,14 @@ class Protocol(object):
     def __getitem__(self, proto):
         h = self._getProtoListInclusive()
         for i in h:
-            if i._isType(proto):
+            if i.isType(proto):
                 return i
         raise KeyError, "No such protocol: %s."%proto
 
     def has_key(self, key):
         h = self._getProtoListInclusive()
         for i in h:
-            if i._isType(key):
+            if i.isType(key):
                 return 1
         return 0
 
@@ -233,7 +233,7 @@ class Protocol(object):
                 break
         return i
         
-    def _isType(self, name):
+    def isType(self, name):
         """
             Is this protocol of type "name"? Used for dict-like acces from
             Packet.
