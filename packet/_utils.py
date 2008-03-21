@@ -127,3 +127,13 @@ class DoubleAssociation(dict):
         dict.__setitem__(self, value, key)
 
 
+def i2b(n):
+     """ Convert an integer to its binary text representation """
+     if n <= 0:
+         if n < 0:
+             return '-' + i2b(-n)
+         return '0'
+     octaldigits = '000','001','010','011','100','101','110','111'
+     octaltext = oct(n).rstrip('L')
+     a = [octaldigits[int(digit)] for digit in octaltext]
+     return ''.join(a).lstrip('0')
