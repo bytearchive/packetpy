@@ -1056,6 +1056,68 @@ class UDP(Protocol):
         return "UDP: %s->%s"%(self.srcPort, self.dstPort)
 
 
+class DHCP(Protocol):
+    """
+        DHCP
+            op      : Message Type
+            htype   : Hardware Type
+            hlen    : Hardware Address Length
+            hops    : Hops
+            xid     : Transaction ID
+            secs    : Seconds Elapsed
+            flags   : Bootp flags
+            ciaddr  : Client IP Address
+            yiaddr  : Your (client) IP Address
+            siaddr  : Next Server IP Address
+            giaddr  : Relay Agent IP Address
+            chaddr  : Client MAC Address
+            sname   : Server host name
+            file    : Boot file name
+    """
+    TYPE = "DHCP"
+    _FlagsOptions = Options(
+            UNICAST   = 0,
+            BROADCAST = 32768,
+    )
+
+    op          = IntField(0, 1)
+    htype       = IntField(1, 1)
+    hlen        = IntField(2, 1)
+    hops        = IntField(3, 1)
+    xid         = IntField(4, 4)
+    secs        = IntField(8, 2)
+    flags       = FlagsField(10, 0, 16, options=_FlagsOptions)
+    ciaddr      = IPAddress(12, "Client IP Address")
+    yiaddr      = IPAddress(16, "Client IP Address")
+    siaddr      = IPAddress(20, "Next Server IP Address")
+    giaddr      = IPAddress(24, "Relay IP Address")
+    chaddr      = EthernetAddress(28)
+    sname       = PaddedString(44, 64)
+    file        = PaddedString(108, 128)
+    payload     = Payload()
+
+    def __repr__(self):
+        return """DHCP:
+    Message Type: %s
+    Hardware Type: %s
+    Hardware Address Length: %s
+    Hops: %s
+    Transaction ID: %s
+    Seconds Elapsed: %s
+    Bootp flags: %s
+    Client IP Address: %s
+    Your (client) IP Address: %s
+    Next Server IP Address: %s
+    Relay Agent IP Address: %s
+    Client MAC Address: %s
+    Server host name: %s
+    Boot file name: %s"""%(
+        self.op, self.htype, self.hlen, self.hops, self.xid,
+        self.secs, _utils.i2b(self.flags), self.ciaddr, self.yiaddr,
+        self.siaddr, self.giaddr, self.chaddr, self.sname, self.file
+    )
+
+
 class IGMP(Protocol):
     pass
 
