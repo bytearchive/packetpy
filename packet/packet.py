@@ -1081,6 +1081,7 @@ class DHCP(Protocol):
         Note that this class assumes that the hardware layer is Ethernet.
     """
     TYPE = "DHCP"
+    _COOKIEOK = 1669485411  # The 4 integers decode to to this as single field
     _FlagsOptions = Options(
             UNICAST   = 0,
             BROADCAST = 32768,
@@ -1102,6 +1103,7 @@ class DHCP(Protocol):
     filename    = PaddedString(108, 128)
     cookie      = IntField(236, 4)
     payload     = Payload()
+
     def __repr__(self):
         return """DHCP:
     Message Type: %s
@@ -1117,10 +1119,12 @@ class DHCP(Protocol):
     Relay Agent IP Address: %s
     Client MAC Address: %s
     Server host name: %s
-    Boot file name: %s"""%(
+    Boot file name: %s
+    Cookie: %s"""%(
         self.op, self.htype, self.hlen, self.hops, self.xid,
         self.secs, _utils.i2b(self.flags), self.ciaddr, self.yiaddr,
-        self.siaddr, self.giaddr, self.chaddr, self.sname, self.file
+        self.siaddr, self.giaddr, self.chaddr, self.sname, self.filename,
+        ("OK" if self.cookie == self._COOKIEOK else "BAD")
     )
 
 
