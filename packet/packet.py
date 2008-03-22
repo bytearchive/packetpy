@@ -1047,6 +1047,10 @@ class UDP(Protocol):
                 ]
         return array.array("c", "".join(phdr))
 
+    def _constructNext(self):
+        if self.srcPort in (68, 67) or self.dstPort in (68, 67):
+            self._addProtocol(DHCP, 8)
+
     def _fixChecksums(self):
         self.checksum = 0
         self.checksum = _utils.cksum16(self._getPseudoHeader() + \

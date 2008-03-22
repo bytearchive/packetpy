@@ -1117,6 +1117,14 @@ class uIPAH(pcaptester.pcapTester):
         assert self.data.has_key("icmp")
 
 
+class uDHCPRequest(pcaptester.pcapTester):
+    dump = "dhcp_request"
+    def test_op(self):
+        #print self.data["dhcp"]
+        print self.data
+
+
+
 tests = [
     uEthernet(),
     uTCP(),
@@ -1146,4 +1154,5 @@ tests = [
     uARP(),
     uIPESP(),
     uIPAH(),
+    uDHCPRequest(),
 ]
