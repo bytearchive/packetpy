@@ -1119,9 +1119,22 @@ class uIPAH(pcaptester.pcapTester):
 
 class uDHCPRequest(pcaptester.pcapTester):
     dump = "dhcp_request"
-    def test_op(self):
-        #print self.data["dhcp"]
-        print self.data
+    def test_basics(self):
+        assert self.data["dhcp"].op == 1
+        assert self.data["dhcp"].hlen == 6
+        assert self.data["dhcp"].hops == 0
+        assert self.data["dhcp"].xid == 0x45de8c67
+        assert self.data["dhcp"].secs == 0
+        assert self.data["dhcp"].flags == DHCP.flags["UNICAST"]
+        assert self.data["dhcp"].ciaddr == "0.0.0.0"
+        assert self.data["dhcp"].yiaddr == "0.0.0.0"
+        assert self.data["dhcp"].siaddr == "0.0.0.0"
+        assert self.data["dhcp"].giaddr == "0.0.0.0"
+        assert self.data["dhcp"].chaddr == "00:1b:fc:be:91:cc"
+        assert self.data["dhcp"].sname == ""
+        assert self.data["dhcp"].filename == ""
+        assert self.data["dhcp"].cookie == 0x63825363
+
 
 
 

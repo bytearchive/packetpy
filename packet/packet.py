@@ -1077,6 +1077,8 @@ class DHCP(Protocol):
             chaddr  : Client MAC Address
             sname   : Server host name
             file    : Boot file name
+
+        Note that this class assumes that the hardware layer is Ethernet.
     """
     TYPE = "DHCP"
     _FlagsOptions = Options(
@@ -1097,9 +1099,9 @@ class DHCP(Protocol):
     giaddr      = IPAddress(24, "Relay IP Address")
     chaddr      = EthernetAddress(28)
     sname       = PaddedString(44, 64)
-    file        = PaddedString(108, 128)
+    filename    = PaddedString(108, 128)
+    cookie      = IntField(236, 4)
     payload     = Payload()
-
     def __repr__(self):
         return """DHCP:
     Message Type: %s
