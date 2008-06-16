@@ -428,11 +428,25 @@ static PyObject *pftell(PyObject *self, PyObject *args){
 }
 
 
+static PyObject *pfseek(PyObject *self, PyObject *args){
+    PyObject *dptr;
+    long offset;
+	FILE *f;
+
+    if (!PyArg_ParseTuple(args, "Ol", &dptr, &offset))
+        return NULL;
+
+    f = pcap_file((pcap_t*)PyCObject_AsVoidPtr(dptr));
+    fseek(f, offset, SEEK_SET);
+    return Py_BuildValue("l", fseek(f, offset, SEEK_SET));
+}
+
+
 static PyMethodDef PcapMethods[] = {
     {"open_live",       open_live,      METH_VARARGS,   "Open a device."},
     {"dump_open",       dump_open,      METH_VARARGS,   "Open a dump file."},
     {"open_offline",    open_offline,   METH_VARARGS,   "Open a file for reading."},
-    {"open_dead",       open_dead,   METH_VARARGS,      "Open a dead feed."},
+    {"open_dead",       open_dead,      METH_VARARGS,   "Open a dead feed."},
     {"close",           closeptr,       METH_VARARGS,   "Close a pointer."},
     {"dump_close",      dump_close,     METH_VARARGS,   "Close a dump file."},
     {"dump_ftell",      dump_ftell,     METH_VARARGS,   "Get current dumper file offset."},
@@ -450,7 +464,8 @@ static PyMethodDef PcapMethods[] = {
     {"snapshot",        snapshot,       METH_VARARGS,   "Return the snapshot length passed to pcap_live."},
     {"is_swapped",      is_swapped,     METH_VARARGS,   "True if the current savefile uses a different byte order than the current system."},
     {"fileno",			pfileno,		METH_VARARGS,   "Returns the file descriptor number of the current file."},
-    {"ftell",			pftell,		METH_VARARGS,   "Returns the file position for an offline feed."},
+    {"ftell",			pftell,		    METH_VARARGS,   "Returns the file position for an offline feed."},
+    {"fseek",			pfseek,		    METH_VARARGS,   "Sets the current file position."},
     {"version",         version,        METH_VARARGS,   "Return the major and minor version of the pcap used to write the save file."},
     {"stats",           stats,          METH_VARARGS,   "Get stats for the feed."},
     {NULL, NULL, 0, NULL}        /* Sentinel */

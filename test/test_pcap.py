@@ -55,6 +55,14 @@ class uBPFProgram(libpry.AutoTree):
             "asdf"
         )
 
+    def test_fseek(self):
+        l = packet.pcap.Offline("pcap_data/tdump")
+        pos = l.ftell()
+        p = l.next()
+        l.fseek(pos)
+        p2 = l.next()
+        assert p == p2
+
 
 class uPcapOffline(libpry.AutoTree):
     def setUp(self):

@@ -291,6 +291,9 @@ class Offline(_PcapFeed):
     def ftell(self):
         return _pcap.ftell(self.safe_phandle)
 
+    def fseek(self, offset):
+        return _pcap.fseek(self.safe_phandle, offset)
+
 
 class Dumper(object):
     def __init__(self, feed, filename):
