@@ -61,7 +61,7 @@
 import array, sys
 import _sysvar
 from _packetDescriptors import *
-import _utils
+import utils
 
 
 class PacketPyError(Exception): pass
@@ -277,14 +277,14 @@ class Protocol(object):
         if b and tlen == 1:
             return ord(b)
         else:
-            return _utils.multiord(b)
+            return utils.multiord(b)
 
     def _setIntField(self, frm, tlen, val):
         """
             Set a field of bits to an integer value. The bit field position is
             specified relative to the start of the current protocol header.
         """
-        return self._setByteField(frm, tlen, _utils.multichar(val, tlen))
+        return self._setByteField(frm, tlen, utils.multichar(val, tlen))
 
     def _getBitField(self, frm, bitoffset, bitlen):
         """
@@ -581,7 +581,7 @@ class IP(Protocol):
 
     def _fixChecksums(self):
         self.checksum = 0
-        self.checksum = _utils.cksum16(self.packet._data[self.offset:self.offset + (self.headerLength * 4)])
+        self.checksum = utils.cksum16(self.packet._data[self.offset:self.offset + (self.headerLength * 4)])
 
     def _fixDimensions(self):
         self.length = (len(self.packet) - self.offset)
@@ -613,7 +613,7 @@ class ICMPBase(Protocol):
     payload     = Payload()
     def _fixChecksums(self):
         self.checksum = 0
-        self.checksum = _utils.cksum16(self._prev.payload)
+        self.checksum = utils.cksum16(self._prev.payload)
 
     def _selfConstruct(self):
         self.itype = self.TYPE
@@ -999,7 +999,7 @@ class TCP(Protocol):
                     ip._getByteField(16, 4),
                     "\0",
                     ip._getByteField(9, 1),
-                    _utils.multichar(tcplen, 2)
+                    utils.multichar(tcplen, 2)
                 ]
         return array.array("c", "".join(phdr))
 
@@ -1007,7 +1007,7 @@ class TCP(Protocol):
         tcplen = self._getPayloadOffsets()
         tcplen = tcplen[0] + tcplen[1]
         self.checksum = 0
-        self.checksum = _utils.cksum16(self._getPseudoHeader() + self.packet._data[self.offset:self.offset+tcplen])
+        self.checksum = utils.cksum16(self._getPseudoHeader() + self.packet._data[self.offset:self.offset+tcplen])
 
     def _selfConstruct(self):
         self.dataOffset = 5
@@ -1053,7 +1053,7 @@ class UDP(Protocol):
 
     def _fixChecksums(self):
         self.checksum = 0
-        self.checksum = _utils.cksum16(self._getPseudoHeader() + \
+        self.checksum = utils.cksum16(self._getPseudoHeader() + \
                                 self.packet._data[self.offset:self.offset+self.length])
 
     def __repr__(self):
@@ -1122,7 +1122,7 @@ class DHCP(Protocol):
     Boot file name: %s
     Cookie: %s"""%(
         self.op, self.htype, self.hlen, self.hops, self.xid,
-        self.secs, _utils.i2b(self.flags), self.ciaddr, self.yiaddr,
+        self.secs, utils.i2b(self.flags), self.ciaddr, self.yiaddr,
         self.siaddr, self.giaddr, self.chaddr, self.sname, self.filename,
         ("OK" if self.cookie == self._COOKIEOK else "BAD")
     )
@@ -1246,7 +1246,7 @@ class IPv6(Protocol):
         phdr = [
                     self._getByteField(8, 16),
                     self._getByteField(24, 16),
-                    _utils.multichar(self.payloadlength, 4),
+                    utils.multichar(self.payloadlength, 4),
                     "\0\0\0", chr(58)
                 ]
         return "".join(phdr)
@@ -1367,7 +1367,7 @@ class ICMP6Base(Protocol):
     payload         = Payload()
     def _fixChecksums(self):
         self.checksum = 0
-        self.checksum = _utils.cksum16(
+        self.checksum = utils.cksum16(
                             self._prev._getPseudoHeader() +
                             self._prev.payload
                         )
@@ -1569,7 +1569,7 @@ class Ethernet(Protocol):
                             PPPOE      = 0x8864,
                             LOOPBACK   = 0x9000
                         )
-    TYPE_JUMPER = _utils.DoubleAssociation(
+    TYPE_JUMPER = utils.DoubleAssociation(
         {
             TypeOptions["IP"]:        IP,
             TypeOptions["ARP"]:       ARP,
@@ -1816,7 +1816,7 @@ class Loopback(Protocol):
         return ""
 
 
-AF_JUMPER = _utils.DoubleAssociation(
+AF_JUMPER = utils.DoubleAssociation(
     {
         1:    Loopback,
         2:    IP,
@@ -1825,7 +1825,7 @@ AF_JUMPER = _utils.DoubleAssociation(
 )
 
 
-IP4_PROTO_JUMPER = _utils.DoubleAssociation(
+IP4_PROTO_JUMPER = utils.DoubleAssociation(
     {
         ProtocolOptions["ICMP"]:      ICMP,
         ProtocolOptions["IGMP"]:      IGMP,
@@ -1838,7 +1838,7 @@ IP4_PROTO_JUMPER = _utils.DoubleAssociation(
 )
 
 
-IP6_PROTO_JUMPER = _utils.DoubleAssociation(
+IP6_PROTO_JUMPER = utils.DoubleAssociation(
     {
         ProtocolOptions["ICMP"]:                        ICMP,
         ProtocolOptions["IGMP"]:                        IGMP,
