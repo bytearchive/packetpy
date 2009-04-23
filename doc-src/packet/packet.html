@@ -53,22 +53,20 @@ stack easy to access and manipulate. </p>
 	name. For example, the following retrieves the first IP protocol class
 	found in the stack:</p>
 	
-	<!--(block example)-->
+<!--(block |pySyntax)-->
 # p is a Packet instance
 p["ip"]
 	<!--(end)-->
-@!colourPython(example)!@
 
 	<p> Note that the individual protocol instances provide an interface
 	polymorphic to this. Say we had a packet which contained IP-over-IP
 	tunneled traffic. To retrieve the inner IP packet, we would use the
 	following shorthand: </p>
 
-	<!--(block example)-->
+<!--(block |pySyntax)-->
 # p is a Packet instance
 p["ip"]["ip"]
 	<!--(end)-->
-@!colourPython(example)!@
 
 	<p> The first example can be read as "retrieve the first IP protocol class
 	contained in the packet". The second example can be read as "retriee the

@@ -55,11 +55,10 @@
 </p>
 
 
-	<!--(block example)-->
+<!--(block |pySyntax)-->
 import openbsd.pcap
 
 p = openbsd.pcap.Live("wi0")
 d = openbsd.pcap.Dumper(p, "dump")
 p.loop(10, d)
-	<!--(end)-->
-	@!colourPython(example)!@
+<!--(end)-->
