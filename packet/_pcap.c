@@ -475,7 +475,12 @@ static PyMethodDef PcapMethods[] = {
 void init_pcap(void){
     PyObject *module, *global;
     module = Py_InitModule4("_pcap", PcapMethods, NULL, NULL, PYTHON_API_VERSION);
-	global = PyImport_ImportModule("_global");
+	global = PyImport_ImportModuleEx(
+                "_global",
+                PyModule_GetDict(module),
+                PyModule_GetDict(module),
+                Py_BuildValue("[]")
+            );
 	if (NULL != global) {
 		PcapError = PyObject_GetAttrString(global, "PcapError");
 	}
