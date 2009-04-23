@@ -1,5 +1,5 @@
 import libpry
-import packet._utils as utils
+import packet.utils as utils
 
 
 class uMultiord(libpry.AutoTree):

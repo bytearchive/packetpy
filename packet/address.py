@@ -19,7 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import _utils
+import utils
 
 def getBlocks(addr):
     """
@@ -153,7 +153,7 @@ class IPMask(IPAddress, _MaskMixin):
     def __init__(self, mask):
         if mask is None:
             mask = 32
-        if _utils.isNumberLike(mask):
+        if utils.isNumberLike(mask):
             mask = self._ipFromPrefix(mask)
         IPAddress.__init__(self, mask)
         self.prefix = self._countPrefix(self.bytes)
@@ -192,8 +192,8 @@ class IP6Address(_IPBase):
             raise ValueError, "IPv6 address must have 16 bytes: %s"%repr(addr)
         octets = []
         for i in range(8):
-            octets.append(hex(_utils.multiord(addr[2*i:2*i+2]))[2:])
-        start, finish = _utils.findLongestSubsequence(octets, "0")
+            octets.append(hex(utils.multiord(addr[2*i:2*i+2]))[2:])
+        start, finish = utils.findLongestSubsequence(octets, "0")
         if finish:
             return IP6Address(
                 ":".join(octets[0:start]) + "::" + ":".join(octets[finish+1:])
@@ -219,7 +219,7 @@ class IP6Address(_IPBase):
             nums = getBlocks(self.address)
         if len(nums) != 8:
             raise ValueError, "Mal-formed IPv6 address."
-        return "".join([_utils.multichar(i, 2) for i in nums])
+        return "".join([utils.multichar(i, 2) for i in nums])
 
     def mask(self, *args, **kwargs):
         """
@@ -232,7 +232,7 @@ class IP6Mask(IP6Address, _MaskMixin):
     def __init__(self, mask):
         if mask is None:
             mask = 128
-        if _utils.isNumberLike(mask):
+        if utils.isNumberLike(mask):
             mask = self._ip6FromPrefix(mask)
         IP6Address.__init__(self, mask)
         self.prefix = self._countPrefix(self.bytes)
