@@ -107,6 +107,16 @@ class EthernetAddress(_AddrBase):
 
 
 class _IPBase(_AddrBase):
+    def inNetwork(self, address, mask):
+        """
+            Is this address in the given network?
+        """
+        for i in zip(self.bytes, address.bytes, mask.bytes):
+            s, a, m = ord(i[0]), ord(i[1]), ord(i[2])
+            if not (a&m) == (s&m):
+                return False
+        return True
+
     def __repr__(self):
         return self.address
 

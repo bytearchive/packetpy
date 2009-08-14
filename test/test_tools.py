@@ -2,7 +2,7 @@ import os.path
 import libpry
 import packet.tools as tools
         
-class uSplitter(libpry.TmpDirMixin, libpry.AutoTree):
+class uSplitter(libpry.AutoTree):
     def test_init(self):
         tools.Splitter()
 
@@ -10,7 +10,7 @@ class uSplitter(libpry.TmpDirMixin, libpry.AutoTree):
         s = tools.Splitter()
         libpry.raises(
             "no such file",
-            s, ["nonexistent"], 4, self["tmpdir"],
+            s, ["nonexistent"], 4, self.tmpdir(),
         )
         
     def test_call(self):
@@ -21,7 +21,7 @@ class uSplitter(libpry.TmpDirMixin, libpry.AutoTree):
                 "splitterdata/dump.sequence2"
             ],
             4,
-            os.path.join(self["tmpdir"], "pack"),
+            os.path.join(self.tmpdir(), "pack"),
         )
         assert len(files) == 4
         for i in files:

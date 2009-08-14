@@ -51,6 +51,13 @@ class uIPAddress(libpry.AutoTree):
         a.mask("255.255.0.0")
         repr(a)
 
+    def test_inNetwork(self):
+        a = address.IPAddress("192.168.0.1")
+        m = a.mask("255.255.0.0")
+        assert address.IPAddress("192.168.0.5").inNetwork(a, m)
+        assert address.IPAddress("192.168.255.5").inNetwork(a, m)
+        assert not address.IPAddress("192.169.0.5").inNetwork(a, m)
+
     def test_err(self):
         libpry.raises(
             "must have 4 bytes",
