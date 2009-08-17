@@ -34,6 +34,12 @@ class uEthernetAddress(libpry.AutoTree):
         assert a == b
         assert a == "00:00:00:00:00:00"
 
+    def test_integer(self):
+        a = address.EthernetAddress("00:00:00:00:00:00")
+        assert a.integer == 0
+        a = address.EthernetAddress("00:00:00:00:00:01")
+        assert a.integer == 1
+
     def test_err(self):
         libpry.raises(
             "malformed ethernet",
@@ -50,6 +56,28 @@ class uIPAddress(libpry.AutoTree):
         a = address.IPAddress("192.168.0.1")
         a.mask("255.255.0.0")
         repr(a)
+
+    def test_integer(self):
+        a = address.IPAddress("255.255.255.255")
+        assert a.integer == 2**32-1
+        a = address.IPAddress("0.0.0.1")
+        assert a.integer == 1
+        a = address.IPAddress("255.0.0.0")
+        assert a.integer == 255 << 24
+
+    def _roundtrip(self, a):
+        a = address.IPAddress(a)
+        i = a.integer
+        b = address.IPAddress.fromInteger(i)
+        assert a == b
+
+    def test_integer_roundtrip(self):
+        self._roundtrip("255.255.255.255")
+        self._roundtrip("255.255.255.1")
+        self._roundtrip("1.255.255.1")
+        self._roundtrip("0.255.255.1")
+        self._roundtrip("0.255.255.0")
+        self._roundtrip("0.0.0.0")
 
     def test_inNetwork(self):
         a = address.IPAddress("192.168.0.1")

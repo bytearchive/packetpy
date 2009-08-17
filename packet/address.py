@@ -78,6 +78,15 @@ class _AddrBase(object):
             other = Address(other)
         return (self.bytes == other.bytes)
 
+    @property
+    def integer(self):
+        return utils.multiord(self.bytes)
+
+    @classmethod
+    def fromInteger(klass, i):
+        bytes = utils.multichar(i, klass.WIDTH)
+        return klass.fromBytes(bytes)
+
 
 class EthernetAddress(_AddrBase):
     def __init__(self, address):
@@ -107,6 +116,7 @@ class EthernetAddress(_AddrBase):
 
 
 class _IPBase(_AddrBase):
+    WIDTH = 4
     def inNetwork(self, address, mask):
         """
             Is this address in the given network?
@@ -126,13 +136,13 @@ class IPAddress(_IPBase):
         self.address = address
         self.bytes = self._bytes()
 
-    @staticmethod
-    def fromBytes(bytes):
+    @classmethod
+    def fromBytes(klass, bytes):
         """
             Converts a sequence of 4 bytes to an IPv4 address.
         """
-        if len(bytes) != 4:
-            raise ValueError, "IP Address must have 4 bytes."
+        if len(bytes) != klass.WIDTH:
+            raise ValueError, "IP Address must have %s bytes."%klass.WIDTH
         octets = []
         for i in bytes:
             val = ord(i)
@@ -142,7 +152,7 @@ class IPAddress(_IPBase):
 
     def _bytes(self):
         nums = self.address.split(".")
-        if len(nums) != 4:
+        if len(nums) != self.WIDTH:
             raise ValueError, "Mal-formed IP address."
         ret = []
         for i in nums:
@@ -188,18 +198,19 @@ class IPMask(IPAddress, _MaskMixin):
 
 
 class IP6Address(_IPBase):
+    WIDTH = 16
     def __init__(self, address):
         self.address = address
         # Conformance check: raises on error.
         self.bytes = self._bytes()
 
-    @staticmethod
-    def fromBytes(addr):
+    @classmethod
+    def fromBytes(klass, addr):
         """
             Converts a standard 16-byte IPv6 address to a human-readable string.
         """
-        if len(addr) != 16:
-            raise ValueError, "IPv6 address must have 16 bytes: %s"%repr(addr)
+        if len(addr) != klass.WIDTH:
+            raise ValueError, "IPv6 address must have %s bytes: %s"%(klass.WIDTH, repr(addr))
         octets = []
         for i in range(8):
             octets.append(hex(utils.multiord(addr[2*i:2*i+2]))[2:])
