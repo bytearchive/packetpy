@@ -116,7 +116,6 @@ class EthernetAddress(_AddrBase):
 
 
 class _IPBase(_AddrBase):
-    WIDTH = 4
     def inNetwork(self, address, mask):
         """
             Is this address in the given network?
@@ -127,11 +126,21 @@ class _IPBase(_AddrBase):
                 return False
         return True
 
+    def range(self, mask):
+        """
+            Returns the first and the last addresses in the range defined by
+            this address and the specified mask.
+        """
+        f = self.fromInteger(self.integer&mask.integer)
+        t = self.fromInteger(f.integer|(~mask.integer&(2**(8*self.WIDTH)-1)))
+        return f, t
+
     def __repr__(self):
         return self.address
 
 
 class IPAddress(_IPBase):
+    WIDTH = 4
     def __init__(self, address):
         self.address = address
         self.bytes = self._bytes()

@@ -57,6 +57,32 @@ class uIPAddress(libpry.AutoTree):
         a.mask("255.255.0.0")
         repr(a)
 
+    def test_range(self):
+        a = address.IPAddress("192.168.0.1")
+        m = a.mask("255.255.0.0")
+        x, y = a.range(m)
+        assert x == "192.168.0.0"
+        assert y == "192.168.255.255"
+
+        a = address.IPAddress("192.168.0.1")
+        m = a.mask("255.255.255.255")
+        x, y = a.range(m)
+        assert x == "192.168.0.1"
+        assert y == "192.168.0.1"
+
+        a = address.IPAddress("192.168.0.1")
+        m = a.mask("0.0.0.0")
+        x, y = a.range(m)
+        assert x == "0.0.0.0"
+        assert y == "255.255.255.255"
+
+        a = address.IPAddress("172.16.0.0")
+        m = a.mask(12)
+        x, y = a.range(m)
+        assert x == "172.16.0.0"
+        assert y == "172.31.255.255"
+
+
     def test_integer(self):
         a = address.IPAddress("255.255.255.255")
         assert a.integer == 2**32-1
